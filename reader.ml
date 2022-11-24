@@ -50,7 +50,7 @@ module Reader : READER = struct
     const (fun ch -> ch <= ' ') str
   and nt_end_of_line_or_file str = 
     let nt1 = unitify (char '\n') in
-    let nt2 = unitify nt_end_of_input inopen PC;;
+    let nt2 = unitify nt_end_of_input in
     let nt1 = disj nt1 nt2 in
     nt1 str
   and nt_line_comment str =
