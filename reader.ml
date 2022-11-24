@@ -86,7 +86,14 @@ module Reader : READER = struct
     let ascii_0 = int_of_char '0' in
     let nt2 = pack nt1 (fun ch -> (int_of_char ch) - ascii_0 ) in
     nt2 str
-  and nt_hex_digit str = raise X_not_yet_implemented
+  and nt_hex_digit str =
+    let nt1 = const (fun ch -> 'A' <= ch && ch <= 'F' ) in
+    let ascii_A = (int_of_char 'A') - 10 in
+    let nt2 = pack nt1 (fun ch -> (int_of_char ch) - ascii_A ) in
+    let nt3 = nt_digit in
+    let nt4 = disj nt2 nt3 in
+    nt4 str
+    
   and nt_nat =
     let rec nt str =
     pack (caten nt_digit (disj nt nt_epsilon)) (function (a, s) -> a :: s) str in
