@@ -34,7 +34,7 @@ module type READER = sig
   val print_sexprs : out_channel -> sexpr list -> unit
   val sprint_sexpr : 'a -> sexpr -> string
   val sprint_sexprs : 'a -> sexpr list -> string
-  val scheme_sexpr_list_of_sexpr_list : sexpr list -> sexpr
+  val scheme_sexpr_list_of_sexpr_list : sexpr list -> sexprlo
 end;; (* end of READER signature *)
 
 module Reader : READER = struct
@@ -81,13 +81,13 @@ module Reader : READER = struct
     let nt1 = caten nt_skip_star (caten nt nt_skip_star) in
     let nt1 = pack nt1 (fun (_, (e, _)) -> e) in
     nt1
-  and nt_digit str = nt_digit str = 
+  and nt_digit str = 
     let nt1 = const (fun ch -> '0' <= ch && ch <= '9' ) in
     let ascii_0 = int_of_char '0' in
     let nt2 = pack nt1 (fun ch -> (int_of_char ch) - ascii_0 ) in
     nt2 str
   and nt_hex_digit str = raise X_not_yet_implemented
-  and nt_nat str =
+  and nt_nat =
     let rec nt str =
     pack (caten nt_digit (disj nt nt_epsilon)) (function (a, s) -> a :: s) str in
     pack nt (fun s -> (List.fold_left (fun a b -> 10 * a + b) 0 s))
@@ -101,7 +101,7 @@ module Reader : READER = struct
                     0
                     digits) in
     nt1 str
-  and nt_optional_sign str =  nt_optional_sign str =
+  and nt_optional_sign str =
     let nt1 = const (fun ch -> '+'== ch ) in
     let nt2  = const (fun ch-> '-'== ch ) in
     let nt3  = pack nt1 (fun ch -> true) in 
@@ -160,32 +160,61 @@ module Reader : READER = struct
       (function
        | None -> none_value
        | Some(x) -> x)
-  and nt_floatA str =
-    let nt1 = nt_nat in
-    let nt2 = char '.' in
-    let nt3 = make_maybe nt_mantissa in
-    let nt4 = make_maybe nt_exponent in
-    let nt5 = caten nt1 (caten nt2 ( caten nt3 nt4)) in
-    nt5 str
+ and nt_floatA str =
+    let nt1 = char '.' in
+    let nt2 = nt_integer_part in
+    let nt3 = maybe nt_mantissa in
+    let nt33 = pack nt3 (fun mvalue -> match mvalue with
+                                       | Some(e) -> e
+                                       | None -> 0.0
+                 ) in
+    let nt4 = maybe nt_exponent in
+    let nt44 = pack nt4 (fun evalue -> match evalue with
+                                       | Some(eb) -> eb
+                                       | None -> 1.0
+                 ) in
+    let nt5 = caten nt2 nt1 in
+    let nt6 = pack nt5 (fun (ipart, dot) -> ipart) in
+    let nt7 = caten nt6 nt33 in
+    let nt8 = pack nt7 (fun (ipart, mvalue) -> ipart +. mvalue) in
+    let nt9 = caten nt8 nt44 in
+    let nt10 = pack nt9 (fun (fpart, evalue) -> fpart *. evalue) in
+    nt10 str  
+
   and nt_floatB str =
     let nt1 = char '.' in
     let nt2 = nt_mantissa in
-    let nt3 = make_maybe nt_exponent in
-    let nt4 = caten nt1 (caten nt2 nt3) in
-    nt4 str
-  and nt_floatC str = 
-    let nt1 = nt_nat in
-    let nt2 = nt_exponent in
-    let nt3 = caten  nt1 nt2  in
-    nt3 str
+    let nt4 = maybe nt_exponent in
+    let nt44 = pack nt4 (fun evalue -> match evalue with
+                                       | Some(ev) -> ev
+                                       | None -> 1.0
+                 ) in
+    let nt5 = caten nt1 nt2 in
+    let nt6 = pack nt5 (fun (dot, mpart) -> mpart) in
+    let nt9 = caten nt6 nt44 in
+    let nt10 = pack nt9 (fun (fpart, evalue) -> fpart *. evalue) in
+    nt10 str
+
+  and nt_floatC str =
+       let nt1 = nt_integer_part in
+       let nt2 = nt_exponent in
+       let nt3 = caten nt1 nt2 in
+       let nt4 = pack nt3 (fun (ipart, evalue) -> ipart *. evalue ) in
+       nt4 str
+
   and nt_float str =
     let nt1 = nt_optional_sign in
     let nt2 = nt_floatA in
     let nt3 = nt_floatB in
     let nt4 = nt_floatC in
-    let nt5 = disj nt2 nt3 nt4 in
-    let nt6 = caten nt1 nt5 in
-    nt6 str
+    let nt5 = disj nt2 nt3 in
+    let nt55 = disj nt5 nt4 in
+    let nt6 = caten nt1 nt55 in
+    let nt7 = pack nt6 (fun (b, value) ->
+                  match b with
+                  |true -> value
+                  |false -> -1.0 *. value ) in 
+    nt7 str
   and nt_number str =
     let nt1 = nt_float in
     let nt2 = nt_frac in
