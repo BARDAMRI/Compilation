@@ -68,6 +68,13 @@ module Reader : READER = struct
       [nt_line_comment;
        nt_paired_comment;
        nt_sexpr_comment] str
+  and nt_symbol_char str =
+    let nt1 = range_ci 'a' 'z' in
+    let nt1 = pack nt1 Char.lowercase_ascii in
+    let nt2 = range '0' '9' in
+    let nt3 = one_of "!$^*_-+=<>?/" in
+    let nt1 = disj nt1 (disj nt2 nt3) in
+    nt1 str
   and nt_void str =
     let nt1 = word_ci "#void" in
     let nt1 = not_followed_by nt1 nt_symbol_char in
@@ -84,16 +91,15 @@ module Reader : READER = struct
   and nt_digit str = 
     let nt1 = const (fun ch -> '0' <= ch && ch <= '9' ) in
     let ascii_0 = int_of_char '0' in
-    let nt2 = pack nt1 (fun ch -> (int_of_char ch) - ascii_0 ) in
+    let nt2 = pack nt1 (fun ch -> ScmRational( ((int_of_char ch) - ascii_0) , 1 )) in
     nt2 str
   and nt_hex_digit str =
     let nt1 = const (fun ch -> 'A' <= ch && ch <= 'F' ) in
     let ascii_A = (int_of_char 'A') - 10 in
-    let nt2 = pack nt1 (fun ch -> (int_of_char ch) - ascii_A ) in
+    let nt2 = pack nt1 (fun ch ->  ScmRational( ((int_of_char ch) - ascii_A) ,1 )) in
     let nt3 = nt_digit in
     let nt4 = disj nt2 nt3 in
     nt4 str
-    
   and nt_nat =
     let rec nt str =
     pack (caten nt_digit (disj nt nt_epsilon)) (function (a, s) -> a :: s) str in
@@ -201,12 +207,11 @@ module Reader : READER = struct
     let nt9 = caten nt6 nt44 in
     let nt10 = pack nt9 (fun (fpart, evalue) -> fpart *. evalue) in
     nt10 str
-
   and nt_floatC str =
        let nt1 = nt_integer_part in
        let nt2 = nt_exponent in
        let nt3 = caten nt1 nt2 in
-       let nt4 = pack nt3 (fun (ipart, evalue) -> ipart *. evalue ) in
+       let nt4 = pack nt3 (fun (ipart, evalue) -> ipart *. evalue) in
        nt4 str
 
   and nt_float str =
@@ -219,8 +224,8 @@ module Reader : READER = struct
     let nt6 = caten nt1 nt55 in
     let nt7 = pack nt6 (fun (b, value) ->
                   match b with
-                  |true -> value
-                  |false -> -1.0 *. value ) in 
+                  |true -> ScmReal (value )
+                  |false -> ScmReal ( -1.0 *. value )) in 
     nt7 str
   and nt_number str =
     let nt1 = nt_float in
@@ -274,17 +279,11 @@ module Reader : READER = struct
     let nt1 = caten nt1 nt2 in
     let nt1 = pack nt1 (fun (_, ch) -> ScmChar ch) in
     nt1 str
-  and nt_symbol_char str =
-    let nt1 = range_ci 'a' 'z' in
-    let nt1 = pack nt1 Char.lowercase_ascii in
-    let nt2 = range '0' '9' in
-    let nt3 = one_of "!$^*_-+=<>?/" in
-    let nt1 = disj nt1 (disj nt2 nt3) in
-    nt1 str
   and nt_symbol str =
     let nt1 = plus nt_symbol_char in
-    let nt2 = pack nt1 list_to_string in
-    nt2 str
+    let nt2 = pack nt1 string_of_list in
+    let nt3 = pack nt2 (fun sym -> ScmSymbol sym ) in
+    nt3 str
   and nt_string_part_simple str =
     let nt1 =
       disj_list [unitify (char '"'); unitify (char '\\'); unitify (word "~~");
