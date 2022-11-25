@@ -67,7 +67,15 @@ module Reader : READER = struct
     let nt3 = pack nt2 (fun comment-> "") in
     nt3 str
     
-  and nt_sexpr_comment str = raise X_not_yet_implemented
+  and nt_sexpr_comment str =
+    let nt0 = word "#\\" in
+    let nt1 = char '{' in
+    let nt11 = not_followed_by nt0 nt1 in
+    let nt2 = char '}' in
+    let nt22 = not_followed_by nt0 nt2 in
+    let nt3 = caten nt11 (caten nt_any nt22) in
+    let nt4 = pack nt3 (fun (fpa,sexprs,epa) -> "") in
+    nt4 str
   and nt_comment str =
     disj_list
       [nt_line_comment;
