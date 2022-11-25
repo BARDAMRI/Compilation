@@ -88,7 +88,7 @@ module Reader : READER = struct
     let nt9 = nt_symbol in
     let nt99 = unitify nt9 in
     let nt10 = nt_quoted_form in
-    let nt1010 = unitify nt10 in *)
+    let nt1010 = unitify nt10 in 
     let nt_all = disj_list [nt11 ; nt22 ; nt33 ; nt44 ; nt55 ; nt66 ; nt77 ; nt88 ; nt99 ;
                                                                           nt1010] in
     nt_all str 
