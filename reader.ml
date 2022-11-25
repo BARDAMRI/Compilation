@@ -61,7 +61,12 @@ module Reader : READER = struct
     let nt1 = caten nt1 nt_end_of_line_or_file in
     let nt1 = unitify nt1 in
     nt1 str
-  and nt_paired_comment str = raise X_not_yet_implemented
+  and nt_paired_comment str =
+    let nt1 = word "#;" in
+    let nt2 = plus nt1 in
+    let nt3 = pack nt2 (fun comment-> "") in
+    nt3 str
+    
   and nt_sexpr_comment str = raise X_not_yet_implemented
   and nt_comment str =
     disj_list
@@ -344,7 +349,8 @@ module Reader : READER = struct
                          ScmNil in
                      ScmPair(ScmSymbol "string-append", argl)) in
     nt1 str
-  and nt_vector str =  let nt1 = word '#' in
+  and nt_vector str =
+    let nt1 = word '#' in
     let nt2 = word '(' in 
     let nt3 = caten nt1 nt2 in
     let nt4 = nt_sexpr in
