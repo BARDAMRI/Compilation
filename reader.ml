@@ -65,17 +65,42 @@ module Reader : READER = struct
     let nt1 = word "#;" in
     let nt2 = plus nt1 in
     let nt3 = pack nt2 (fun comment-> "") in
-    nt3 str
-    
+    let nt33 = unitify nt3 in
+    nt33 str
+
+  and nt_disj_all str =
+    let nt1 = nt_number in
+    let nt11 = unitify nt1 in
+    let nt2 = nt_string in
+    let nt22 = unitify nt2 in
+    let nt3 = nt_sexpr in 
+    let nt33 = unitify nt3 in 
+    let nt4 = nt_boolean in
+    let nt44 = unitify nt4 in
+    let nt5 = nt_char in
+    let nt55 = unitify nt5 in
+    let nt6 = nt_comment in
+    let nt66 = unitify nt6 in
+    let nt7 = nt_vector in
+    let nt77 = unitify nt7 in 
+    let nt8 = nt_list in
+    let nt88 = unitify nt8 in 
+    let nt9 = nt_symbol in
+    let nt99 = unitify nt9 in
+    let nt10 = nt_quoted_form in
+    let nt1010 = unitify nt10 in *)
+    let nt_all = disj_list [nt11 ; nt22 ; nt33 ; nt44 ; nt55 ; nt66 ; nt77 ; nt88 ; nt99 ;
+                                                                          nt1010] in
+    nt_all str 
   and nt_sexpr_comment str =
-    let nt0 = word "#\\" in
-    let nt1 = char '{' in
-    let nt11 = not_followed_by nt0 nt1 in
-    let nt2 = char '}' in
-    let nt22 = not_followed_by nt0 nt2 in
-    let nt3 = caten nt11 (caten nt_any nt22) in
-    let nt4 = pack nt3 (fun (fpa,sexprs,epa) -> "") in
-    nt4 str
+    let nt0 = word "#;" in
+    let all_exprs = nt_disj_all in
+    let space = nt_whitespace in
+    let nt_sexprs = caten space (caten all_exprs space ) in
+    let remove = unitify nt_sexprs in
+    let connect = caten nt0 remove in
+    let nt1 = unitify connect in
+    nt1 str
   and nt_comment str =
     disj_list
       [nt_line_comment;
@@ -104,18 +129,18 @@ module Reader : READER = struct
   and nt_digit str = 
     let nt1 = const (fun ch -> '0' <= ch && ch <= '9' ) in
     let ascii_0 = int_of_char '0' in
-    let nt2 = pack nt1 (fun ch -> ScmRational( ((int_of_char ch) - ascii_0) , 1 )) in
+    let nt2 = pack nt1 (fun ch -> ((int_of_char ch) - ascii_0)) in
     nt2 str
   and nt_hex_digit str =
     let nt1 = const (fun ch -> 'A' <= ch && ch <= 'F' ) in
     let ascii_A = (int_of_char 'A') - 10 in
-    let nt2 = pack nt1 (fun ch ->  ScmRational( ((int_of_char ch) - ascii_A) ,1 )) in
+    let nt2 = pack nt1 (fun ch -> ((int_of_char ch) - ascii_A)) in
     let nt3 = nt_digit in
     let nt4 = disj nt2 nt3 in
     nt4 str
   and nt_nat =
     let rec nt str =
-    pack (caten nt_digit (disj nt nt_epsilon)) (function (a, s) -> a :: s) str in
+    pack (caten nt_digit (disj nt nt_epsilon)) (function (a,s) -> a :: s) str in
     pack nt (fun s -> (List.fold_left (fun a b -> 10 * a + b) 0 s))
   and nt_hex_nat str = 
     let nt1 = plus nt_hex_digit in
@@ -334,7 +359,7 @@ module Reader : READER = struct
   and nt_string_part str =
     disj nt_string_part_static nt_string_part_dynamic str
   and nt_string str =
-    let nt1 = char '"' in
+     let nt1 = char '"' in
     let nt2 = star nt_string_part in
     let nt3 = char '"' in
     let nt1 = caten nt1 (caten nt2 nt3) in
