@@ -283,7 +283,8 @@ module Reader : READER = struct
     nt1 str
   and nt_symbol str =
     let nt1 = plus nt_symbol_char in
-    nt1 str
+    let nt2 = pack nt1 list_to_string in
+    nt2 str
   and nt_string_part_simple str =
     let nt1 =
       disj_list [unitify (char '"'); unitify (char '\\'); unitify (word "~~");
@@ -353,7 +354,22 @@ module Reader : READER = struct
     let nt7 = word ')' in
     let nt8 = caten nt6 nt7 in
     nt8 str
-  and nt_list str = raise X_not_yet_implemented
+  and nt_list str =
+    let nt0 = nt_sexpr in
+    let nt1 = plus nt0 in
+    let nt2 = word "()" in
+    let nt3 = word "." in
+    let nt4 = pack nt2 (fun li -> ScmNil) in
+    let nt5 = word "(" in
+    let nt6 = word ")" in
+    let nt7 = caten nt5 (caten nt1 nt6) in
+    let nt8 = pack nt7 (fun (_, (sexprs, _)) ->
+                  List.fold_right (fun car cdr -> ScmPair (car, cdr)) sexprs ScmNil) in
+    let nt9 = caten nt5 (caten n1 (caten nt3 ( caten nt0 nt6))) in
+    let nt10 = pack nt9 (fun (_, (sexprs,(_,(sexpr,_))))->
+                   List.fold_right (fun car cdr -> ScmPair (car, cdr)) sexprs sexpr) in
+    let nt11 = disj_list [nt4; nt8; nt10] in
+    nt11 str
   and make_quoted_form nt_qf qf_name =
     let nt1 = caten nt_qf nt_sexpr in
     let nt1 = pack nt1
