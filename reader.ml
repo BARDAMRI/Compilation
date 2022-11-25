@@ -141,7 +141,7 @@ module Reader : READER = struct
   and nt_nat =
     let rec nt str =
     pack (caten nt_digit (disj nt nt_epsilon)) (function (a,s) -> a :: s) str in
-    pack nt (fun s -> (List.fold_left (fun a b -> 10 * a + b) 0 s))
+    pack nt (fun s -> (List.fold_left (fun a b -> 10 * a + b) 0 s));;
   and nt_hex_nat str = 
     let nt1 = plus nt_hex_digit in
     let nt1 = pack nt1
@@ -347,7 +347,20 @@ module Reader : READER = struct
     let nt1 = pack nt1 (fun (_, (n, _)) -> n) in
     let nt1 = pack nt1 char_of_int in
     nt1 str
-  and nt_string_part_dynamic str = raise X_not_yet_implemented
+  and nt_string_part_dynamic str =
+    let nt0 = char '~' in
+    let nt1 = caten nt_skip_star nt0 in
+    let nt11 = unitify nt1 in
+    let nt2 =  caten (char '{' ) nt_skip_star in
+    let nt22 = unitify nt2 in
+    let nt3 = caten nt11 nt22 in
+    let nt4 = caten nt3 nt_sexpr in
+    let nt5 = caten nt4 (unitify (char '}')) in
+    let nt6 = pack nt5 (fun ((_,sexpr),_) ->
+                              Dynamic(ScmPair (ScmSymbol ("format") ,
+                                               ScmPair ( ScmString("~a"),
+                                                         ScmPair(sexpr , ScmNil ))))) in
+    nt4 str
   and nt_string_part_static str =
     let nt1 = disj_list [nt_string_part_simple;
                          nt_string_part_meta;
@@ -383,13 +396,13 @@ module Reader : READER = struct
                      ScmPair(ScmSymbol "string-append", argl)) in
     nt1 str
   and nt_vector str =
-    let nt1 = word '#' in
-    let nt2 = word '(' in 
+    let nt1 = char '#' in
+    let nt2 = char '(' in 
     let nt3 = caten nt1 nt2 in
     let nt4 = nt_sexpr in
     let nt5 = caten nt4 (nt_skip_star) in
     let nt6 = caten nt3 nt5 in
-    let nt7 = word ')' in
+    let nt7 = char ')' in
     let nt8 = caten nt6 nt7 in
     nt8 str
   and nt_list str =
@@ -484,7 +497,7 @@ module Reader : READER = struct
               ScmPair(sexpr, ScmNil)) ->
        Printf.sprintf ",@%s" (string_of_sexpr sexpr)
     | ScmPair(car, cdr) ->
-       string_of_sexpr' (string_of_sexpr car) cdr
+       string_of_sexpr' (string_of_sexpr car) cdr 
   and string_of_sexpr' car_string = function
     | ScmNil -> Printf.sprintf "(%s)" car_string
     | ScmPair(cadr, cddr) ->
