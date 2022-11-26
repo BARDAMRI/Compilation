@@ -131,9 +131,9 @@ module Reader : READER = struct
     let nt2 = pack nt1 (fun ch -> int_of_char ch ) in 
     nt2 str 
   and nt_hex_digit str =
-    let nt1 = const (fun ch -> 'A' <= ch && ch <= 'F' ) in
-    let ascii_A = (int_of_char 'A') - 10 in
-    let nt2 = pack nt1 (fun ch -> ((int_of_char ch) - ascii_A)) in
+    let nt1 = (rance_ci 'a' 'f') in
+    let ascii_a = (int_of_char 'a') - 10 in
+    let nt2 = pack nt1 (fun ch -> ((int_of_char ch) - ascii_a)) in
     let nt3 = nt_digit in
     let nt4 = disj nt2 nt3 in
     nt4 str
