@@ -102,10 +102,12 @@ module Reader : READER = struct
     let nt1 = unitify connect in
     nt1 str
   and nt_comment str =
-    disj_list
+    let nt = nt_line_comment in
+    nt str
+  (* disj_list
       [nt_line_comment;
        nt_paired_comment;
-       nt_sexpr_comment] str
+       nt_sexpr_comment] str *)
   and nt_symbol_char str =
     let nt1 = range_ci 'a' 'z' in
     let nt1 = pack nt1 Char.lowercase_ascii in
