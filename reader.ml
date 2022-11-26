@@ -53,6 +53,7 @@ module Reader : READER = struct
     let nt2 = unitify nt_end_of_input in
     let nt1 = disj nt1 nt2 in
     nt1 str
+  
   and nt_line_comment str =
     let nt1 = char ';' in
     let nt2 = diff nt_any nt_end_of_line_or_file in
@@ -61,39 +62,55 @@ module Reader : READER = struct
     let nt1 = caten nt1 nt_end_of_line_or_file in
     let nt1 = unitify nt1 in
     nt1 str
-  and nt_paired_comment str =
-    let nt1 = word "#;" in
-    let nt2 = plus nt1 in
-    let nt3 = pack nt2 (fun comment-> "") in
-    let nt33 = unitify nt3 in
-    nt33 str
-
-  and nt_disj_all str =
-    let nt1 = nt_number in
-    let nt11 = unitify nt1 in
-    let nt2 = nt_string in
-    let nt22 = unitify nt2 in
-    let nt3 = nt_sexpr in 
-    let nt33 = unitify nt3 in 
-    let nt4 = nt_boolean in
-    let nt44 = unitify nt4 in
-    let nt5 = nt_char in
-    let nt55 = unitify nt5 in
-    let nt6 = nt_comment in
-    let nt66 = unitify nt6 in
-    let nt7 = nt_vector in
-    let nt77 = unitify nt7 in 
-    let nt8 = nt_list in
-    let nt88 = unitify nt8 in 
-    let nt9 = nt_symbol in
-    let nt99 = unitify nt9 in
-    let nt10 = nt_quoted_forms in
-    let nt1010 = unitify nt10 in 
-    let nt_all = disj_list [nt11 ; nt22 ; nt33 ; nt44 ; nt55 ; nt66 ; nt77 ; nt88 ; nt99 ;
-                                                                          nt1010] in
-    nt_all str 
+  
+   and nt_exp str =
+    let nt1 = unitify nt_string in
+    let nt2 = unitify nt_list in
+    let nt3 = unitify nt_vector in
+    let nt4 = unitify nt_char in
+    let nt5 = unitify nt_boolean in
+    let nt6 = unitify nt_symbol in
+    let nt7 = unitify nt_sexpr in
+    let nt8 = unitify nt_number in
+    let nt9 = unitify nt_char in
+    let nt10 = unitify nt_quoted_forms in
+    let nt11 = disj_list [nt1 ; nt2 ; nt3 ; nt4 ; nt5 ; nt6 ; nt7 ; nt8 ; nt9 ; nt10 ; ] in
+    let nt12 = caten (star nt_whitespace) nt11 in 
+    let nt0 = caten nt12 (star nt_whitespace) in
+    let nt = unitify nt0 in
+    nt str
+  
   and nt_sexpr_comment str =
     let nt0 = word "#;" in
+<<<<<<< HEAD
+    let nt1 = caten nt0 nt_exp in
+    let nt2 = unitify nt1 in
+    nt2 str
+  
+  and nt_paired_comment str =
+    let nt0 =  disj_list [ unitify nt_string; unitify nt_char; nt_comment] in
+    let nt1 = one_of "{}" in
+    let nt2 = unitify nt1 in
+    let nt3 = disj nt0 nt2  in
+    let nt31 = diff nt_any nt3 in
+    let nt33 = unitify nt31 in
+    let nt4 = disj nt33 nt0 in
+    let nt5 = star nt4 in
+    let nt6 = char '{' in
+    let nt7 = char '}' in
+    let nt8 = caten nt5 nt7 in
+    let nt9 = caten nt6 nt8 in
+    let nt10 = unitify nt9 in
+    nt10 str 
+
+ and nt_comment str =
+  disj_list
+  [nt_line_comment;
+    nt_paired_comment;
+    nt_sexpr_comment] str
+
+and nt_symbol_char str =reader
+=======
     let all_exprs = nt_disj_all in
     let space = nt_whitespace in
     let nt_sexprs = caten space (caten all_exprs space ) in
@@ -109,6 +126,7 @@ module Reader : READER = struct
        nt_paired_comment;
        nt_sexpr_comment] str *)
   and nt_symbol_char str =
+>>>>>>> 29f350f2b85d87e8d88aaef45ff51ecd26043ef0
     let nt1 = range_ci 'a' 'z' in
     let nt1 = pack nt1 Char.lowercase_ascii in
     let nt2 = range '0' '9' in
