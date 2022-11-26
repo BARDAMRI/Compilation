@@ -108,7 +108,7 @@ module Reader : READER = struct
     nt_paired_comment;
     nt_sexpr_comment] str
 
-and nt_symbol_char str =reader
+  and nt_symbol_char str =
     let nt1 = range_ci 'a' 'z' in
     let nt1 = pack nt1 Char.lowercase_ascii in
     let nt2 = range '0' '9' in
