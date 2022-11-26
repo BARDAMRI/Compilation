@@ -128,22 +128,21 @@ module Reader : READER = struct
     nt1
   and nt_digit str =
     let nt1 = (range_ci '0' '9') in
-    let nt2 = pack nt1 (fun ch -> int_of_char ch ) in 
-    nt2 str 
+    let ascii_0 = int_of_char '0' in
+    let nt2 = pack nt1 (fun ch -> (int_of_char ch)-ascii_0 ) in 
+    nt2 str
   and nt_hex_digit str =
-    let nt1 = range_ci 'a' 'f' in
-    let nt11 = pack nt1 Char.lowercase_ascii in
-    let ascii_a = (int_of_char 'a') - 10 in
-    let nt2 = pack nt11 (fun ch -> ((int_of_char ch) - ascii_a)) in
+    let nt1 = const (fun ch -> 'A' <= ch && ch <= 'F' ) in
+    let ascii_A = (int_of_char 'A') - 10 in
+    let nt2 = pack nt1 (fun ch -> ((int_of_char ch) - ascii_A)) in
     let nt3 = nt_digit in
     let nt4 = disj nt2 nt3 in
     nt4 str
   and nt_nat str =
-    let nt1 = nt_digit in
-    let nt11 = pack nt1 (fun d -> char_of_int d ) in
-    let nt2 = plus nt11 in
-    let nt3 = pack nt2 (fun d -> int_of_string ( string_of_list d)) in
-    nt3 str
+    let nt1 = plus nt_digit in
+    let nt2 = pack nt1 (fun digits -> List.fold_left (fun num digit -> 10 * num + digit ) 0 digits ) in
+    nt2 str 
+    
   and nt_hex_nat str = 
     let nt1 = plus nt_hex_digit in
     let nt1 = pack nt1
@@ -159,8 +158,12 @@ module Reader : READER = struct
     let nt2  = const (fun ch-> '-'== ch ) in
     let nt3  = pack nt1 (fun ch -> true) in 
     let nt4 = pack nt2 (fun ch -> false) in
-    let nt5 = disj nt3 nt4 in
-  nt5 str
+    let nt5 = disj nt3 nt4  in
+    let nt6 = maybe nt5 in
+    let nt7 = pack nt6 (fun b -> match b with
+                                 | Some(e) ->e
+                                 | None -> true ) in
+    nt7 str
   and nt_int str =
     let nt1 = caten nt_optional_sign nt_nat in
     let nt1 = pack nt1
