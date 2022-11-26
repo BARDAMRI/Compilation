@@ -34,7 +34,7 @@ module type READER = sig
   val print_sexprs : out_channel -> sexpr list -> unit
   val sprint_sexpr : 'a -> sexpr -> string
   val sprint_sexprs : 'a -> sexpr list -> string
-  val scheme_sexpr_list_of_sexpr_list : sexpr list -> sexprlo
+  val scheme_sexpr_list_of_sexpr_list : sexpr list -> sexpr 
 end;; (* end of READER signature *)
 
 module Reader : READER = struct
@@ -87,7 +87,7 @@ module Reader : READER = struct
     let nt88 = unitify nt8 in 
     let nt9 = nt_symbol in
     let nt99 = unitify nt9 in
-    let nt10 = nt_quoted_form in
+    let nt10 = nt_quoted_forms in
     let nt1010 = unitify nt10 in 
     let nt_all = disj_list [nt11 ; nt22 ; nt33 ; nt44 ; nt55 ; nt66 ; nt77 ; nt88 ; nt99 ;
                                                                           nt1010] in
@@ -141,7 +141,7 @@ module Reader : READER = struct
   and nt_nat =
     let rec nt str =
     pack (caten nt_digit (disj nt nt_epsilon)) (function (a,s) -> a :: s) str in
-    pack nt (fun s -> (List.fold_left (fun a b -> 10 * a + b) 0 s));;
+    pack nt (fun s -> (List.fold_left (fun a b -> 10 * a + b) 0 s))
   and nt_hex_nat str = 
     let nt1 = plus nt_hex_digit in
     let nt1 = pack nt1
@@ -360,7 +360,7 @@ module Reader : READER = struct
                               Dynamic(ScmPair (ScmSymbol ("format") ,
                                                ScmPair ( ScmString("~a"),
                                                          ScmPair(sexpr , ScmNil ))))) in
-    nt4 str
+    nt6 str
   and nt_string_part_static str =
     let nt1 = disj_list [nt_string_part_simple;
                          nt_string_part_meta;
@@ -397,14 +397,20 @@ module Reader : READER = struct
     nt1 str
   and nt_vector str =
     let nt1 = char '#' in
-    let nt2 = char '(' in 
-    let nt3 = caten nt1 nt2 in
-    let nt4 = nt_sexpr in
-    let nt5 = caten nt4 (nt_skip_star) in
-    let nt6 = caten nt3 nt5 in
-    let nt7 = char ')' in
-    let nt8 = caten nt6 nt7 in
-    nt8 str
+    let nt2 = char '(' in
+    let nt3 = char ')' in
+    let nt4 = caten nt1 nt2 in
+    let nt5 = caten nt4 (caten nt_skip_star nt3) in
+    let nt55 = pack nt5 (fun _  -> ScmVector [] ) in
+    let nt6 = caten nt4 nt_skip_star in
+    let nt7 = nt_sexpr in
+    let nt8 = plus nt7 in
+    let nt9 = caten nt8 nt3 in
+    let nt99 = pack nt9 (fun (sexprs,_) -> ScmVector sexprs) in
+    let nt11 = disj nt55 nt99 in
+    let nt10 = caten nt6 nt11 in
+    let nt12 = pack nt11 (fun (_,sexpr) -> sexpr ) in
+    nt11 str
   and nt_list str =
     let nt0 = nt_sexpr in
     let nt1 = plus nt0 in
@@ -416,7 +422,7 @@ module Reader : READER = struct
     let nt7 = caten nt5 (caten nt1 nt6) in
     let nt8 = pack nt7 (fun (_, (sexprs, _)) ->
                   List.fold_right (fun car cdr -> ScmPair (car, cdr)) sexprs ScmNil) in
-    let nt9 = caten nt5 (caten n1 (caten nt3 ( caten nt0 nt6))) in
+    let nt9 = caten nt5 (caten nt1 (caten nt3 ( caten nt0 nt6))) in
     let nt10 = pack nt9 (fun (_, (sexprs,(_,(sexpr,_))))->
                    List.fold_right (fun car cdr -> ScmPair (car, cdr)) sexprs sexpr) in
     let nt11 = disj_list [nt4; nt8; nt10] in
