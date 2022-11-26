@@ -413,13 +413,13 @@ module Reader : READER = struct
     nt12 str
   and nt_list str =
     let nt0 = nt_sexpr in
-    let nt1 = plus nt0 in
+    let nt1 = plus nt0 inc
     let nt2 = word "()" in
     let nt3 = word "." in
     let nt4 = pack nt2 (fun li -> ScmNil) in
     let nt5 = word "(" in
     let nt6 = word ")" in
-    let nt7 = caten nt5 (caten nt1 nt6) in
+    let nt7 = caten nt5 (caten nt1 nt6) inב
     let nt8 = pack nt7 (fun (_, (sexprs, _)) ->
                   List.fold_right (fun car cdr -> ScmPair (car, cdr)) sexprs ScmNil) in
     let nt9 = caten nt5 (caten nt1 (caten nt3 ( caten nt0 nt6))) in
