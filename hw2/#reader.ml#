@@ -194,7 +194,7 @@ module Tag_Parser : TAG_PARSER = struct
     then raise (X_syntax_error(ScmPair(ribs,exprs), "all argument must be diffrent in let expr"))
     else if(len_args) = (len_exprs)
          then  ScmPair(ScmPair(ScmSymbol "lambda",ScmPair(let_args ribs,exprs)),expend_exprs ribs)
-    else raise (X_syntax_error(ScmPair(ribs,exprs), "args and exprs in let must be in the same length"))
+    else raise (X_syntax_error(ScmPair(ribs,exprs), "args and exprs in let must be in the same length")) ;;
     
   let rec tag_parse sexpr =
     match sexpr with
