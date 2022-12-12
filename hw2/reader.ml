@@ -194,14 +194,14 @@ module Tag_Parser : TAG_PARSER = struct
     then raise (X_syntax_error(ScmPair(ribs,exprs), "all argument must be diffrent in let expr"))
     else if(len_args) = (len_exprs)
          then  ScmPair(ScmPair(ScmSymbol "lambda",ScmPair(let_args ribs,exprs)),expend_exprs ribs)
-    else raise (X_syntax_error(ScmPair(ribs,exprs), "args and exprs in let must be in the same length"))
+    else raise (X_syntax_error(ScmPair(ribs,exprs), "args and exprs in let must be in the same length")) ;;
     
   let rec tag_parse sexpr =
     match sexpr with
     | ScmVoid | ScmBoolean _ | ScmChar _ | ScmString _ | ScmNumber _ ->
        ScmConst sexpr
     | ScmPair (ScmSymbol "quote", ScmPair (sexpr, ScmNil)) ->
-       raise X_not_yet_implemented
+      ScmConst(sexpr)
     | ScmPair (ScmSymbol "quasiquote", ScmPair (sexpr, ScmNil)) ->
        tag_parse (macro_expand_qq sexpr)
     | ScmSymbol var ->
@@ -462,16 +462,16 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
   let annotate_lexical_address =
     let rec run expr params env =
       match expr with
-      | ScmConst sexpr -> raise X_not_yet_implemented
-      | ScmVarGet (Var str) -> raise X_not_yet_implemented
-      | ScmIf (test, dit, dif) -> raise X_not_yet_implemented
-      | ScmSeq exprs -> raise X_not_yet_implemented
-      | ScmOr exprs -> raise X_not_yet_implemented
+      | ScmConst sexpr -> ScmConst'(sexpr)
+      | ScmVarGet (Var str) -> ScmVarGet'(tag_lexical_address_for_var expr params env)
+      | ScmIf (test, dit, dif) -> ScmIf'(run test params env,run dit params env, run dif params env)
+      | ScmSeq exprs -> ScmSeq'(List.map (fun s -> run s params env) exprs)
+      | ScmOr exprs -> ScmOr'(List.map (fun s -> run s params env) exprs) 
       | ScmVarSet(Var v, expr) -> raise X_not_yet_implemented
       (* this code does not [yet?] support nested define-expressions *)
-      | ScmVarDef(Var v, expr) -> raise X_not_yet_implemented
-      | ScmLambda (params', Simple, expr) -> raise X_not_yet_implemented
-      | ScmLambda (params', Opt opt, expr) -> raise X_not_yet_implemented
+      | ScmVarDef(Var v, expr) -> ScmVarDef'(tag_lexical_address_for_var Var params env , run expr params env))
+      | ScmLambda (params', Simple, expr) -> ScmLambda'(params',(run expr params' (params::env)))
+      | ScmLambda (params', Opt opt, expr) -> ScmLambda'(pars,par,run body (pars@[par]) (params::env))
       | ScmApplic (proc, args) ->
          ScmApplic' (run proc params env,
                      List.map (fun arg -> run arg params env) args,
