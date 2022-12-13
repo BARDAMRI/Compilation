@@ -101,13 +101,7 @@ module Tag_Parser : TAG_PARSER = struct
             ScmPair (ScmSymbol "vector", sexprs)
     | sexpr -> sexpr;;
 
-  let rec macro_expand_and_clauses expr = function
-    | [] -> ScmPair ( ScmBoolean false , ScmNil)
-    | expr' :: exprs ->
-       let ret_expand =   macro_expand_and_clauses  exprs in
-       ScmPair ( ScmSymbol "if" , ScmPair ( expr' , ret_expand  )) 
-
-  let rec macro_expand_cond_ribs ribs =
+   let rec macro_expand_cond_ribs ribs =
     match ribs with
     | ScmNil -> ScmVoid
     | ScmPair (ScmPair (ScmSymbol "else", exprs), ribs) ->
@@ -179,7 +173,14 @@ module Tag_Parser : TAG_PARSER = struct
     |ScmPair (car, cdr) -> 1+ ( list_length cdr)
     |sexpr -> raise (X_syntax_error (sexpr, "List of let must be proper one."));;
     
-    
+  let rec names_vals = function
+    | ScmNil -> ([], [])
+    |ScmPair (ScmPair(name,ScmPair ( value, ScmNil)) ,ribs) ->
+      let (names, values) = names_values ribs in
+      (name::names, value::values)
+    | _ -> raise(X_syntax "Malformed let-ribs");;
+
+  let rec 
   let expend_exprs exprs = 
     match exprs with
     | ScmNil -> ScmNil
@@ -269,12 +270,11 @@ module Tag_Parser : TAG_PARSER = struct
                         exprs)) -> raise X_not_yet_implemented
     | ScmPair (ScmSymbol "letrec", ScmPair (ribs, exprs)) ->
        raise X_not_yet_implemented
-    | ScmPair (ScmSymbol "and", ScmNil) -> ScmBoolean true
-    | ScmPair (ScmSymbol "and", exprs) ->
-       (match (scheme_list_to_ocaml exprs) with
-        | expr :: exprs, ScmNil ->
-           tag_parse (macro_expand_and_clauses expr exprs)
-        | _ -> raise (X_syntax "malformed and-expression"))
+    | ScmPair (ScmSymbol "and", ScmNil) -> tag_parse (ScmBoolean true)
+    | ScmPair (ScmSymbol "and", ScmPair ( expr, exprs)) ->
+       let rest = ScmPair ( ScmSymbol "and" , exprs ) in
+       tag_parse (ScmPair( ScmSymbol "if" ,  ScmPair ( expr ,
+                                                       ScmPair ( rest , ScmPair (ScmBoolean false, ScmNil )))))
     | ScmPair (ScmSymbol "cond", ribs) ->
        tag_parse (macro_expand_cond_ribs ribs)
     | ScmPair (proc, args) ->
