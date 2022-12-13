@@ -271,6 +271,7 @@ module Tag_Parser : TAG_PARSER = struct
     | ScmPair (ScmSymbol "letrec", ScmPair (ribs, exprs)) ->
        raise X_not_yet_implemented
     | ScmPair (ScmSymbol "and", ScmNil) -> tag_parse (ScmBoolean true)
+    | ScmPair (ScmSymbol "and" , ScmPair ( expr , ScmNil ) -> tag_parse (expr) 
     | ScmPair (ScmSymbol "and", ScmPair ( expr, exprs)) ->
        let rest = ScmPair ( ScmSymbol "and" , exprs ) in
        tag_parse (ScmPair( ScmSymbol "if" ,  ScmPair ( expr ,
