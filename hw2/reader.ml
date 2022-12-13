@@ -102,11 +102,10 @@ module Tag_Parser : TAG_PARSER = struct
     | sexpr -> sexpr;;
 
   let rec macro_expand_and_clauses expr = function
-    | [] -> raise X_not_yet_implemented
+    | [] -> ScmPair ( ScmBoolean false , ScmNil)
     | expr' :: exprs ->
-        let cdr_expand = ScmPair ( ScmSymbol "and" , exprs ) in
-       let ret_expand =   macro_expand_and_clauses  macro_expand_and_clauses  in
-         ScmPair ( ScmSymbol "if" , ScmPair ( expr' , ScmNilScmPair (ret_expand . ScmNil ))) 
+       let ret_expand =   macro_expand_and_clauses  exprs in
+       ScmPair ( ScmSymbol "if" , ScmPair ( expr' , ret_expand  )) 
 
   let rec macro_expand_cond_ribs ribs =
     match ribs with
