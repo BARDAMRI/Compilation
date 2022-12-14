@@ -33,7 +33,7 @@ module type TAG_PARSER = sig
   val print_exprs : out_channel -> expr list -> unit
   val sprint_expr : 'a -> expr -> string
   val sprint_exprs : 'a -> expr list -> string    
-end;;
+end;;s
 
 module Tag_Parser : TAG_PARSER = struct
   open Reader;;
@@ -472,7 +472,7 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
       | ScmIf (test, dit, dif) -> ScmIf'(run test params env,run dit params env, run dif params env)
       | ScmSeq exprs -> ScmSeq'(List.map (fun s -> run s params env) exprs)
       | ScmOr exprs -> ScmOr'(List.map (fun s -> run s params env) exprs) 
-      | ScmVarSet(Var v, expr) -> raise X_not_yet_implemented
+      | ScmVarSet(Var v, expr) ->  ScmVarSet'(Var,run expr' false)
       (* this code does not [yet?] support nested define-expressions *)
       | ScmVarDef(Var v, expr) -> ScmVarDef'(tag_lexical_address_for_var Var params env , run expr params env))
       | ScmLambda (params', Simple, expr) -> ScmLambda'(params',(run expr params' (params::env)))
