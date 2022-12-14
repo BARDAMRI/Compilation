@@ -241,17 +241,20 @@ module Tag_Parser : TAG_PARSER = struct
            let values  =  scheme_sexpr_list_of_sexpr_lis values in
                ScmPair ( ScmPair ( ScmSymbol "lambda" ,ScmPair (names, exprs)) , values )
     | ScmPair (ScmSymbol "let*", ScmPair (ScmNil, exprs)) ->
-       raise X_not_yet_implemented
+       tag_parse( ScmPair ( ScmSymbol "lambda" , ScmPair(ScmNil, exprs)) )
     | ScmPair (ScmSymbol "let*",
                ScmPair
                  (ScmPair
                     (ScmPair (var, ScmPair (value, ScmNil)), ScmNil),
-                  exprs)) -> raise X_not_yet_implemented
+                  exprs)) ->
+       tag_parse ( ScmPair ( ScmSymbol "let" , ScmPair ( (ScmPair(var ,ScmPair ( value, ScmNil)) ,exprs))
     | ScmPair (ScmSymbol "let*",
                ScmPair (ScmPair (ScmPair (var,
                                           ScmPair (arg, ScmNil)),
                                  ribs),
-                        exprs)) -> raise X_not_yet_implemented
+                        exprs)) ->
+                           let rest = tag_parse ( ScmPair (ScmSymbol "let*" , ScmPair (ribs, exprs)) ) in
+                           tag_parse( ScmPair ( ScmSymbol "let" , ScmPair ( ScmPair (var,  ScmPair (arg, ScmNil))  , ScmPair(rest , ScmNil))))
     | ScmPair (ScmSymbol "letrec", ScmPair (ribs, exprs)) ->
        let (names, values) = names_values ribs in
        let dummy_ribs =
@@ -266,7 +269,7 @@ module Tag_Parser : TAG_PARSER = struct
              (List.map2
               (lambda name value ->
                ScmPair (ScmSymbol "set!" , ScmPair (name , ScmPair(value,ScmNil )))) names values) in
-               let exprs = List.fold_right ( lambda set_bangs exprs -> ScmPair ( set_bang , exprs))
+       let exprs = List.fold_right ( lambda set_bangs exprs -> ScmPair ( set_bang , exprs))
            set_bangs exprs in
                ScmPair ( ScmSymbol "let" , ScmPair ( dummy_ribs , exprs))
     | ScmPair (ScmSymbol "and", ScmNil) -> tag_parse (ScmBoolean true)
