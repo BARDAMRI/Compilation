@@ -180,25 +180,6 @@ module Tag_Parser : TAG_PARSER = struct
       (name::names, value::values)
     | _ -> raise(X_syntax "Malformed let-ribs");;
 
-  let rec 
-  let expend_exprs exprs = 
-    match exprs with
-    | ScmNil -> ScmNil
-    | ScmPair(ScmPair(var,expr), ScmNil) -> expr
-    | ScmPair(ScmPair(var,expr),cdr) ->  scm_append expr (let_exprs cdr)
-    | e -> raise X_proper_list_error ;;
-
-  let expend_let ribs exprs =
-    let expres = expend_exprs exprs in
-    let args_list =  scheme_list_to_ocaml ribs in
-    let len_args = list_length ribs in
-    let len_exprs = list_length expres in
-    if ( compare_lis args_list) = false
-    then raise (X_syntax_error(ScmPair(ribs,exprs), "all argument must be diffrent in let expr"))
-    else if(len_args) = (len_exprs)
-         then  ScmPair(ScmPair(ScmSymbol "lambda",ScmPair(let_args ribs,exprs)),expend_exprs ribs)
-    else raise (X_syntax_error(ScmPair(ribs,exprs), "args and exprs in let must be in the same length")) ;;
-    
   let rec tag_parse sexpr =
     match sexpr with
     | ScmVoid | ScmBoolean _ | ScmChar _ | ScmString _ | ScmNumber _ ->
@@ -255,7 +236,10 @@ module Tag_Parser : TAG_PARSER = struct
            ScmLambda(unsymbolify_vars params, Opt opt, expr)
         | _ -> raise (X_syntax "invalid parameter list"))
     | ScmPair (ScmSymbol "let", ScmPair (ribs, exprs)) ->
-       expend_let ribs exprs
+       let (names,values) = names_values ribs in
+       let names = scheme_sexpr_list_of_sexpr_list names and
+           let values  =  scheme_sexpr_list_of_sexpr_lis values in
+               ScmPair ( ScmPair ( ScmSymbol "lambda" ,ScmPair (names, exprs)) , values )
     | ScmPair (ScmSymbol "let*", ScmPair (ScmNil, exprs)) ->
        raise X_not_yet_implemented
     | ScmPair (ScmSymbol "let*",
@@ -269,7 +253,22 @@ module Tag_Parser : TAG_PARSER = struct
                                  ribs),
                         exprs)) -> raise X_not_yet_implemented
     | ScmPair (ScmSymbol "letrec", ScmPair (ribs, exprs)) ->
-       raise X_not_yet_implemented
+       let (names, values) = names_values ribs in
+       let dummy_ribs =
+         scheme_sexpr_list_of_sexpr_list
+           ( List.map(
+                 lambda name -> ScmPair
+                                  ( name , ScmPair
+                                             ( ScmPair (ScmSymbol "quote" , ScmPair
+                                                                              (ScmSymbol "whatever" ,
+                                                                               ScmNil)), ScmNil))) names) in
+       let set_bangs =
+             (List.map2
+              (lambda name value ->
+               ScmPair (ScmSymbol "set!" , ScmPair (name , ScmPair(value,ScmNil )))) names values) in
+               let exprs = List.fold_right ( lambda set_bangs exprs -> ScmPair ( set_bang , exprs))
+           set_bangs exprs in
+               ScmPair ( ScmSymbol "let" , ScmPair ( dummy_ribs , exprs))
     | ScmPair (ScmSymbol "and", ScmNil) -> tag_parse (ScmBoolean true)
     | ScmPair (ScmSymbol "and" , ScmPair ( expr , ScmNil ) -> tag_parse (expr) 
     | ScmPair (ScmSymbol "and", ScmPair ( expr, exprs)) ->
