@@ -488,20 +488,20 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
   (* run this second *)
   let annotate_tail_calls = 
     let rec run in_tail = function
-      | (ScmConst' _) as orig -> raise X_not_yet_implemented
-      | (ScmVarGet' _) as orig -> raise X_not_yet_implemented
-      | ScmIf' (test, dit, dif) -> raise X_not_yet_implemented
-      | ScmSeq' [] -> raise X_not_yet_implemented
-      | ScmSeq' (expr :: exprs) -> raise X_not_yet_implemented
-      | ScmOr' [] -> raise X_not_yet_implemented
-      | ScmOr' (expr :: exprs) -> raise X_not_yet_implemented
-      | ScmVarSet' (var', expr') -> raise X_not_yet_implemented
-      | ScmVarDef' (var', expr') -> raise X_not_yet_implemented
+      | (ScmConst' _) as orig -> orig
+      | (ScmVarGet' _) as orig -> orig
+      | ScmIf' (test, dit, dif) -> ScmIf'(run test false, run dit in_tail, (run dif in_tail))
+      | ScmSeq' [] ->  ScmSeq' ([])
+      | ScmSeq' (expr :: exprs) ->  ScmSeq'(runl in_tail (expr :: exprs ))
+      | ScmOr' [] -> []
+      | ScmOr' (expr :: exprs) -> ScmOr'(runl in_tail expr) ScmOr'(runl in_tail exprs)
+      | ScmVarSet' (var', expr') -> ScmSet'(var',runl exprs false)
+      | ScmVarDef' (var', expr') -> ScmVarDef'(var',runl exprs false)
       | (ScmBox' _) as expr' -> raise X_not_yet_implemented
       | (ScmBoxGet' _) as expr' -> raise X_not_yet_implemented
       | ScmBoxSet' (var', expr') -> raise X_not_yet_implemented
-      | ScmLambda' (params, Simple, expr) -> raise X_not_yet_implemented
-      | ScmLambda' (params, Opt opt, expr) -> raise X_not_yet_implemented
+      | ScmLambda' (params, Simple, expr) ->  ScmLambda'(params, Simple , (run expr true))
+      | ScmLambda' (params, Opt opt, expr) -> ScmLambda' (pars,par, Opt ,(run body true))
       | ScmApplic' (proc, args, app_kind) ->
          if in_tail
          then ScmApplic' (run false proc,
@@ -512,9 +512,9 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
                           Non_Tail_Call)
     and runl in_tail expr = function
       | [] -> [run in_tail expr]
-      | expr' :: exprs -> (run false expr) :: (runl in_tail expr' exprs)
-    in
-    fun expr' -> raise X_not_yet_implemented;;
+      | expr' :: exprs -> (run false expr) :: (runl in_tail expr' exprs) in
+      
+    fun expr' -> run false expr' ;;
 
   (* auto_box *)
 
@@ -763,7 +763,7 @@ let rec sexpr_of_expr' = function
        Reader.scheme_sexpr_list_of_sexpr_list
          (List.map sexpr_of_expr' args) in
      ScmPair (proc, args)
-  | _ -> raise X_not_yet_implemented;;
+  | _ -> raise (X_syntax "Unknown form of expr' to sexpr");; 
 
 let string_of_expr' expr =
   Printf.sprintf "%a" Reader.sprint_sexpr (sexpr_of_expr' expr);;
