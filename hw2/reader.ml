@@ -587,7 +587,24 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
                      List.map (fun bj -> (ai, bj)) bs')
                    as');;
 
-  let should_box_var name expr params = raise X_not_yet_implemented;;
+  let should_box_var name expr params = (* idan *)
+    let reads_and_writes = find_reads_and_writes name expr params [] in
+    let extracted_read = match reads_and_writes with
+      |([],[]) | ([],[lstWrite])-> []
+      |([lstRead],[]) | ([lstRead],[lstWrite])-> lstRead in
+    let extracted_write = match reads_and_writes with
+      |([],[]) | ([lstRead],[])-> []
+      |([],[lstWrite]) | ([lstRead],[lstWrite])-> lstWrite in
+    let products = cross_product extracted_read extracted_write in
+    let check = List.map
+                  (fun (read,write) -> match (read,write) with
+                                       |([_,envRead],[_envWrite])-> envRead == envWrite
+                                       |([],[_,envWrite]) | ([_,envRead],[]) | ([],[]) -> false )
+                  products in
+    let search_for_true = List.exist
+                            (fun b -> b)
+                            check in
+    search_for_true;;
 
   let box_sets_and_gets name body =
     let rec run expr =
