@@ -1,3 +1,4 @@
+#use "reader.ml"
 exception X_not_yet_implemented;;
 exception X_this_should_not_happen of string;;
 
@@ -105,7 +106,7 @@ module Tag_Parser : TAG_PARSER = struct
     match ribs with
     | ScmNil -> ScmVoid
     | ScmPair (ScmPair (ScmSymbol "else", exprs), ribs) ->
-       (ScmPair (ScmSymbol "begin" , macro_expand_cond_ribs exprs))
+       (ScmPair (ScmSymbol "begin", exprs))
     | ScmPair (ScmPair (expr,
                         ScmPair (ScmSymbol "=>",
                                  ScmPair (func, ScmNil))),
@@ -169,7 +170,7 @@ module Tag_Parser : TAG_PARSER = struct
       ScmConst(sexpr)
     | ScmPair (ScmSymbol "quasiquote", ScmPair (sexpr, ScmNil)) ->
        tag_parse (macro_expand_qq sexpr)
-    | ScmSymbol var ->
+    | ScmSymbol var -> (* (else 'unknown*)
        if (is_reserved_word var)
        then raise (X_syntax "Variable cannot be a reserved word")
        else ScmVarGet(Var var)
