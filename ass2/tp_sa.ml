@@ -223,17 +223,15 @@ module Tag_Parser : TAG_PARSER = struct
            values = scheme_sexpr_list_of_sexpr_list values in
          tag_parse (ScmPair (ScmPair (ScmSymbol "lambda", ScmPair (names, exprs)), values))
     | ScmPair (ScmSymbol "let*", ScmPair (ScmNil, exprs)) ->
-       tag_parse( ScmPair ( ScmSymbol "lambda" , ScmPair(ScmNil, exprs)) )
+       tag_parse( ScmPair ( ScmSymbol "let" , ScmPair(ScmNil, exprs)))
     | ScmPair (ScmSymbol "let*", ScmPair (ScmPair
                     (ScmPair (var, ScmPair (value, ScmNil)), ScmNil),  exprs)) ->
-       tag_parse (ScmPair
-             ( ScmSymbol "let" , ScmPair ((ScmPair(var ,ScmPair ( value, ScmNil)) ,exprs))))
+       tag_parse (ScmPair(ScmSymbol("let"), ScmPair(ScmPair(ScmPair (var, ScmPair (value, ScmNil)),ScmNil),exprs)))
     | ScmPair (ScmSymbol "let*",
                ScmPair (ScmPair (ScmPair (var,ScmPair (arg, ScmNil)), ribs), exprs)) ->
-       let rest = ScmPair( ScmSymbol "let*" , ScmPair (ribs , exprs)) in 
-       tag_parse( ScmPair ( ScmSymbol "let" ,  ScmPair( ScmPair ( ScmPair (var,ScmPair (arg, ScmNil))
-                                              ,ScmNil),
-                                     ScmPair (rest ,ScmNil))))
+
+             tag_parse (ScmPair(ScmSymbol("let"), ScmPair(ScmPair(ScmPair (var,ScmPair (arg, ScmNil)),ScmNil),ScmPair(ScmPair(ScmSymbol("let*"),ScmPair(ribs,exprs)),ScmNil))))
+  
     | ScmPair (ScmSymbol "letrec", ScmPair (ribs, exprs)) ->
        let (names, values) = names_values ribs in
        let dummy_ribs = scheme_sexpr_list_of_sexpr_list (  List.map ( fun name -> ScmPair( name , ScmPair
