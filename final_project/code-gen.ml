@@ -66,10 +66,13 @@ module Code_Generation : CODE_GENERATION= struct
       | ScmVoid -> raise X_not_yet_implemented
       | ScmNil -> raise X_not_yet_implemented
       | ScmBoolean _ | ScmChar _ | ScmString _ | ScmNumber _ ->
-         raise X_not_yet_implemented
-      | ScmSymbol sym -> raise X_not_yet_implemented
+         [sexpr]
+      | ScmSymbol sym ->
+         [ScmString(sym)]
       | ScmPair (car, cdr) -> (run car) @ (run cdr) @ [sexpr]
-      | ScmVector sexprs -> raise X_not_yet_implemented
+      | ScmVector sexprs ->
+         let nt_res = runs sexprs in
+         nt_res@sexpr
     and runs sexprs =
       List.fold_left (fun full sexpr -> full @ (run sexpr)) [] sexprs
     in fun exprs' ->
