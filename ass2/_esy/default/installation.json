@@ -1,0 +1,41 @@
+{
+  "ocaml@4.12.1001@d41d8cd9":
+    "/home/user/.esy/source/i/ocaml__4.12.1001__13c48f2c",
+  "ass2@link-dev:./esy.json": "/home/user/Desktop/Compi/Compilation/ass2",
+  "@opam/yojson@opam:2.0.2@eb65f292":
+    "/home/user/.esy/source/i/opam__s__yojson__opam__c__2.0.2__ccf6de0d",
+  "@opam/sexplib0@opam:v0.15.1@51111c0c":
+    "/home/user/.esy/source/i/opam__s__sexplib0__opam__c__v0.15.1__7e598e8d",
+  "@opam/seq@opam:base@d8d7de1d":
+    "/home/user/.esy/source/i/opam__s__seq__opam__c__base__a0c677b1",
+  "@opam/result@opam:1.5@1c6a6533":
+    "/home/user/.esy/source/i/opam__s__result__opam__c__1.5__74485f30",
+  "@opam/re@opam:1.10.4@c4910ba6":
+    "/home/user/.esy/source/i/opam__s__re__opam__c__1.10.4__39debd71",
+  "@opam/ppx_yojson_conv_lib@opam:v0.15.0@773058a7":
+    "/home/user/.esy/source/i/opam__s__ppx__yojson__conv__lib__opam__c__v0.15.0__fba50f2c",
+  "@opam/pp@opam:1.1.2@89ad03b5":
+    "/home/user/.esy/source/i/opam__s__pp__opam__c__1.1.2__ebad31ff",
+  "@opam/ocamlformat-rpc-lib@opam:0.18.0@4bef249f":
+    "/home/user/.esy/source/i/opam__s__ocamlformat_rpc_lib__opam__c__0.18.0__f92e54f6",
+  "@opam/ocamlfind@opam:1.9.5@c23112ba":
+    "/home/user/.esy/source/i/opam__s__ocamlfind__opam__c__1.9.5__250e7bcd",
+  "@opam/ocaml-lsp-server@opam:1.8.3@b64dff17":
+    "/home/user/.esy/source/i/opam__s__ocaml_lsp_server__opam__c__1.8.3__f0841b6b",
+  "@opam/dune-build-info@opam:3.6.1@5877ed82":
+    "/home/user/.esy/source/i/opam__s__dune_build_info__opam__c__3.6.1__68ae6470",
+  "@opam/dune@opam:3.6.1@662f326b":
+    "/home/user/.esy/source/i/opam__s__dune__opam__c__3.6.1__0b966cb1",
+  "@opam/dot-merlin-reader@opam:4.5@2a523ca0":
+    "/home/user/.esy/source/i/opam__s__dot_merlin_reader__opam__c__4.5__977409a9",
+  "@opam/csexp@opam:1.5.1@8a8fb3a7":
+    "/home/user/.esy/source/i/opam__s__csexp__opam__c__1.5.1__a5d42d7e",
+  "@opam/cppo@opam:1.6.9@db929a12":
+    "/home/user/.esy/source/i/opam__s__cppo__opam__c__1.6.9__327e8fcf",
+  "@opam/base-unix@opam:base@87d0b2eb":
+    "/home/user/.esy/source/i/opam__s__base_unix__opam__c__base__93427a57",
+  "@opam/base-threads@opam:base@36803084":
+    "/home/user/.esy/source/i/opam__s__base_threads__opam__c__base__f282958b",
+  "@esy-ocaml/substs@0.0.1@d41d8cd9":
+    "/home/user/.esy/source/i/esy_ocaml__s__substs__0.0.1__19de1ee1"
+}

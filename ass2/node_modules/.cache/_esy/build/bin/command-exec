@@ -1,0 +1,261 @@
+#!/bin/bash
+# Command environment
+
+#
+# Built-in
+#
+export ESY__ROOT_PACKAGE_CONFIG_PATH="/home/user/Desktop/Compi/Compilation/ass2/esy.json"
+export ELECTRON_RUN_AS_NODE='1'
+export SYSTEMD_EXEC_PID='1258'
+export VSCODE_CWD='/home/user'
+export XDG_DATA_DIRS='/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'
+export MANAGERPID='1121'
+export CAML_LD_LIBRARY_PATH='/usr/local/lib/node_modules/esy/3/i/esy-71a059e4/stublibs:/usr/local/lib/node_modules/esy/3/i/esy-71a059e4/lib/stublibs:/home/user/.opam/4.14.0/lib/stublibs:/home/user/.opam/4.14.0/lib/ocaml/stublibs:/home/user/.opam/4.14.0/lib/ocaml'
+export LOGNAME='user'
+export SHLVL='0'
+export XDG_SESSION_CLASS='user'
+export GNOME_SETUP_DISPLAY=':1'
+export _='/usr/local/lib/node_modules/esy/3/i/esy-71a059e4/bin/esy'
+export GNOME_DESKTOP_SESSION_ID='this-is-deprecated'
+export XDG_MENU_PREFIX='gnome-'
+export GDMSESSION='ubuntu'
+export OPAM_SWITCH_PREFIX='/home/user/.opam/4.14.0'
+export XDG_CONFIG_DIRS='/etc/xdg/xdg-ubuntu:/etc/xdg'
+export XDG_CURRENT_DESKTOP='Unity'
+export DOTNET_ROOT='/usr/lib/dotnet/dotnet6-6.0.110'
+export HOME='/home/user'
+export GNOME_SHELL_SESSION_MODE='ubuntu'
+export JOURNAL_STREAM='8:21299'
+export XDG_RUNTIME_DIR='/run/user/1000'
+export SSH_AGENT_LAUNCHER='gnome-keyring'
+export GTK_MODULES='gail:atk-bridge'
+export GDK_BACKEND='x11'
+export USERNAME='user'
+export XDG_SESSION_TYPE='wayland'
+export VSCODE_HANDLES_UNCAUGHT_ERRORS='true'
+export CHROME_DESKTOP='code-url-handler.desktop'
+export SESSION_MANAGER='local/user-VirtualBox:@/tmp/.ICE-unix/1258,unix/user-VirtualBox:/tmp/.ICE-unix/1258'
+export SHELL='/bin/bash'
+export QT_IM_MODULE='ibus'
+export LESSCLOSE='/usr/bin/lesspipe %s %s'
+export GIO_LAUNCHED_DESKTOP_FILE='/usr/share/applications/code.desktop'
+export MANPATH=':/home/user/.opam/4.14.0/man:/home/user/.opam/4.14.0/man'
+export PWD='/home/user'
+export VSCODE_NLS_CONFIG='{"locale":"en-gb","availableLanguages":{},"_languagePackSupport":true}'
+export IM_CONFIG_PHASE='1'
+export SSH_AUTH_SOCK='/run/user/1000/keyring/ssh'
+export DISPLAY=':0'
+export GIO_LAUNCHED_DESKTOP_FILE_PID='28155'
+export WAYLAND_DISPLAY='wayland-0'
+export VSCODE_CODE_CACHE_PATH='/home/user/.config/Code/CachedData/1ad8d514439d5077d2b0b7ee64d2ce82a9308e5a'
+export USER='user'
+export PATH='/usr/local/lib/node_modules/esy/3/i/esy-71a059e4/bin:/home/user/.opam/4.14.0/bin:/home/user/.opam/4.14.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin:/home/user/.dotnet/tools:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
+export LESSOPEN='| /usr/bin/lesspipe %s'
+export OCAMLPATH='/usr/local/lib/node_modules/esy/3/i/esy-71a059e4/lib:'
+export OCAML_LSP_SERVER_LOG='-'
+export MAN_PATH='/usr/local/lib/node_modules/esy/3/i/esy-71a059e4/man:'
+export XDG_SESSION_DESKTOP='ubuntu'
+export DOTNET_BUNDLE_EXTRACT_BASE_DIR='/home/user/.cache/dotnet_bundle_extract'
+export LANG='en_IL'
+export INVOCATION_ID='c90eef198f544890a30fe977d55da991'
+export IM_CONFIG_CHECK_ENV='1'
+export VSCODE_PID='28155'
+export VSCODE_AMD_ENTRYPOINT='vs/workbench/api/node/extensionHostProcess'
+export OCAML_TOPLEVEL_PATH='/home/user/.opam/4.14.0/lib/toplevel'
+export LS_COLORS=''
+export XAUTHORITY='/run/user/1000/.mutter-Xwaylandauth.63KYX1'
+export DBUS_SESSION_BUS_ADDRESS='unix:path=/run/user/1000/bus,guid=1fd98535bb88b30d151bf0f163a573b3'
+export ORIGINAL_XDG_CURRENT_DESKTOP='ubuntu:GNOME'
+export DBUS_STARTER_ADDRESS='unix:path=/run/user/1000/bus,guid=1fd98535bb88b30d151bf0f163a573b3'
+export VSCODE_IPC_HOOK='/run/user/1000/vscode-16068fa4-1.74.1-main.sock'
+export PS1='\u@\h \[\e[32m\]\w \[\e[91m\]$(parse_git_branch)\[\e[00m\]$ '
+export DESKTOP_SESSION='ubuntu'
+export DBUS_STARTER_BUS_TYPE='session'
+export XMODIFIERS='@im=ibus'
+export QT_ACCESSIBILITY='1'
+export LANGUAGE='en_IL:en'
+export SHELL='/bin/bash'
+export PATH="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/bin:$PATH"
+export cur__etc="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/etc"
+export cur__share="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/share"
+export cur__toplevel="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/toplevel"
+export cur__stublibs="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/stublibs"
+export cur__doc="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/doc"
+export cur__man="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/man"
+export cur__lib="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/lib"
+export cur__sbin="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/sbin"
+export cur__bin="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/bin"
+export cur__install="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e"
+export cur__target_dir="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/b/ass2-45d6b06e"
+export cur__original_root="/home/user/Desktop/Compi/Compilation/ass2"
+export cur__root="/home/user/Desktop/Compi/Compilation/ass2"
+export cur__dev="true"
+export cur__version="link-dev:./esy.json"
+export cur__name="ass2"
+
+#
+# @opam/cppo@opam:1.6.9@db929a12
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__cppo-opam__c__1.6.9-367eeb3a/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__cppo-opam__c__1.6.9-367eeb3a/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__cppo-opam__c__1.6.9-367eeb3a/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__cppo-opam__c__1.6.9-367eeb3a/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__cppo-opam__c__1.6.9-367eeb3a/bin:$PATH"
+
+#
+# @opam/seq@opam:base@d8d7de1d
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__seq-opam__c__base-ce700f48/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__seq-opam__c__base-ce700f48/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__seq-opam__c__base-ce700f48/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__seq-opam__c__base-ce700f48/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__seq-opam__c__base-ce700f48/bin:$PATH"
+
+#
+# @opam/sexplib0@opam:v0.15.1@51111c0c
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__sexplib0-opam__c__v0.15.1-aa66d5f3/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__sexplib0-opam__c__v0.15.1-aa66d5f3/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__sexplib0-opam__c__v0.15.1-aa66d5f3/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__sexplib0-opam__c__v0.15.1-aa66d5f3/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__sexplib0-opam__c__v0.15.1-aa66d5f3/bin:$PATH"
+
+#
+# @opam/base-unix@opam:base@87d0b2eb
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_unix-opam__c__base-dc4b97fb/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__base_unix-opam__c__base-dc4b97fb/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_unix-opam__c__base-dc4b97fb/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_unix-opam__c__base-dc4b97fb/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_unix-opam__c__base-dc4b97fb/bin:$PATH"
+
+#
+# @opam/base-threads@opam:base@36803084
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_threads-opam__c__base-f93e1d7d/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__base_threads-opam__c__base-f93e1d7d/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_threads-opam__c__base-f93e1d7d/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_threads-opam__c__base-f93e1d7d/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__base_threads-opam__c__base-f93e1d7d/bin:$PATH"
+
+#
+# @opam/ocamlfind@opam:1.9.5@c23112ba
+#
+export OCAML_TOPLEVEL_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlfind-opam__c__1.9.5-02b2048e/toplevel"
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlfind-opam__c__1.9.5-02b2048e/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlfind-opam__c__1.9.5-02b2048e/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlfind-opam__c__1.9.5-02b2048e/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlfind-opam__c__1.9.5-02b2048e/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlfind-opam__c__1.9.5-02b2048e/bin:$PATH"
+
+#
+# ocaml@4.12.1001@d41d8cd9
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/ocaml-4.12.1001-d0588c96/lib/ocaml/stublibs:/home/user/.esy/3____________________________________________________________________/i/ocaml-4.12.1001-d0588c96/lib/ocaml:$CAML_LD_LIBRARY_PATH"
+export OCAMLLIB="/home/user/.esy/3____________________________________________________________________/i/ocaml-4.12.1001-d0588c96/lib/ocaml"
+export OCAML_TOPLEVEL_PATH="/home/user/.esy/3____________________________________________________________________/i/ocaml-4.12.1001-d0588c96/lib/ocaml"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/ocaml-4.12.1001-d0588c96/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/ocaml-4.12.1001-d0588c96/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/ocaml-4.12.1001-d0588c96/bin:$PATH"
+
+#
+# @opam/yojson@opam:2.0.2@eb65f292
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__yojson-opam__c__2.0.2-36a7ea38/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__yojson-opam__c__2.0.2-36a7ea38/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__yojson-opam__c__2.0.2-36a7ea38/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__yojson-opam__c__2.0.2-36a7ea38/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__yojson-opam__c__2.0.2-36a7ea38/bin:$PATH"
+
+#
+# @opam/result@opam:1.5@1c6a6533
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__result-opam__c__1.5-17754d02/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__result-opam__c__1.5-17754d02/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__result-opam__c__1.5-17754d02/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__result-opam__c__1.5-17754d02/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__result-opam__c__1.5-17754d02/bin:$PATH"
+
+#
+# @opam/re@opam:1.10.4@c4910ba6
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__re-opam__c__1.10.4-e19fd524/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__re-opam__c__1.10.4-e19fd524/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__re-opam__c__1.10.4-e19fd524/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__re-opam__c__1.10.4-e19fd524/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__re-opam__c__1.10.4-e19fd524/bin:$PATH"
+
+#
+# @opam/ppx_yojson_conv_lib@opam:v0.15.0@773058a7
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ppx__yojson__conv__lib-opam__c__v0.15.0-42d290f4/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__ppx__yojson__conv__lib-opam__c__v0.15.0-42d290f4/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ppx__yojson__conv__lib-opam__c__v0.15.0-42d290f4/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ppx__yojson__conv__lib-opam__c__v0.15.0-42d290f4/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ppx__yojson__conv__lib-opam__c__v0.15.0-42d290f4/bin:$PATH"
+
+#
+# @opam/pp@opam:1.1.2@89ad03b5
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__pp-opam__c__1.1.2-2c219f07/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__pp-opam__c__1.1.2-2c219f07/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__pp-opam__c__1.1.2-2c219f07/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__pp-opam__c__1.1.2-2c219f07/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__pp-opam__c__1.1.2-2c219f07/bin:$PATH"
+
+#
+# @opam/ocamlformat-rpc-lib@opam:0.18.0@4bef249f
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlformat_rpc_lib-opam__c__0.18.0-990ee3aa/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlformat_rpc_lib-opam__c__0.18.0-990ee3aa/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlformat_rpc_lib-opam__c__0.18.0-990ee3aa/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlformat_rpc_lib-opam__c__0.18.0-990ee3aa/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocamlformat_rpc_lib-opam__c__0.18.0-990ee3aa/bin:$PATH"
+
+#
+# @opam/dune-build-info@opam:3.6.1@5877ed82
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune_build_info-opam__c__3.6.1-51649099/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__dune_build_info-opam__c__3.6.1-51649099/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune_build_info-opam__c__3.6.1-51649099/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune_build_info-opam__c__3.6.1-51649099/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune_build_info-opam__c__3.6.1-51649099/bin:$PATH"
+
+#
+# @opam/dune@opam:3.6.1@662f326b
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune-opam__c__3.6.1-e22abb00/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__dune-opam__c__3.6.1-e22abb00/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune-opam__c__3.6.1-e22abb00/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune-opam__c__3.6.1-e22abb00/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dune-opam__c__3.6.1-e22abb00/bin:$PATH"
+
+#
+# @opam/dot-merlin-reader@opam:4.5@2a523ca0
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dot_merlin_reader-opam__c__4.5-2195d757/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__dot_merlin_reader-opam__c__4.5-2195d757/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dot_merlin_reader-opam__c__4.5-2195d757/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dot_merlin_reader-opam__c__4.5-2195d757/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__dot_merlin_reader-opam__c__4.5-2195d757/bin:$PATH"
+
+#
+# @opam/csexp@opam:1.5.1@8a8fb3a7
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__csexp-opam__c__1.5.1-d15935ef/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__csexp-opam__c__1.5.1-d15935ef/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__csexp-opam__c__1.5.1-d15935ef/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__csexp-opam__c__1.5.1-d15935ef/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__csexp-opam__c__1.5.1-d15935ef/bin:$PATH"
+
+#
+# @esy-ocaml/substs@0.0.1@d41d8cd9
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/esy_ocaml__s__substs-0.0.1-ed6217b4/stublibs:/home/user/.esy/3____________________________________________________________________/i/esy_ocaml__s__substs-0.0.1-ed6217b4/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/esy_ocaml__s__substs-0.0.1-ed6217b4/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/esy_ocaml__s__substs-0.0.1-ed6217b4/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/esy_ocaml__s__substs-0.0.1-ed6217b4/bin:$PATH"
+
+#
+# @opam/ocaml-lsp-server@opam:1.8.3@b64dff17
+#
+export CAML_LD_LIBRARY_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocaml_lsp_server-opam__c__1.8.3-43eca15a/stublibs:/home/user/.esy/3____________________________________________________________________/i/opam__s__ocaml_lsp_server-opam__c__1.8.3-43eca15a/lib/stublibs:$CAML_LD_LIBRARY_PATH"
+export OCAMLPATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocaml_lsp_server-opam__c__1.8.3-43eca15a/lib:$OCAMLPATH"
+export MAN_PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocaml_lsp_server-opam__c__1.8.3-43eca15a/man:$MAN_PATH"
+export PATH="/home/user/.esy/3____________________________________________________________________/i/opam__s__ocaml_lsp_server-opam__c__1.8.3-43eca15a/bin:$PATH"
+
+#
+# Built-in
+#
+export OCAMLFIND_LDCONF="ignore"
+export OCAMLFIND_DESTDIR="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/i/ass2-45d6b06e/lib"
+export DUNE_BUILD_DIR="/home/user/Desktop/Compi/Compilation/ass2/_esy/default/store/b/ass2-45d6b06e"
+export DUNE_STORE_ORIG_SOURCE_DIR="true"
+export SHELL="env -i /bin/bash --norc --noprofile"
+export PATH="$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+export SHELL="/bin/bash"
+exec "$@"
