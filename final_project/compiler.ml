@@ -450,15 +450,24 @@ module Code_Generation : CODE_GENERATION= struct
     let rec run params env = function
       | ScmConst' sexpr -> (* change *)
         let addr = search_constant_address sexpr consts in 
-        (Printf.sprintf "\tmov rax,L_constants + %s\n" (string_of_int (addr)))
+        Printf.sprintf "\tmov rax,L_constants + %s\n" (string_of_int (addr))
       | ScmVarGet' (Var' (v, Free)) ->
          let label = search_free_var_table v free_vars in
          Printf.sprintf
            "\tmov rax, qword [%s]\n"
            label
-      | ScmVarGet' (Var' (v, Param minor)) -> raise X_not_yet_implemented
-      | ScmVarGet' (Var' (v, Bound (major, minor))) ->
-         raise X_not_yet_implemented
+      | ScmVarGet' (Var' (v, Param minor)) -> (* change *)
+        Printf.sprintf 
+        "\tmov rax, qword [rbp +8 * (4 + %s)]\n" 
+        (string_of_int(minor))
+      | ScmVarGet' (Var' (v, Bound (major, minor))) -> (* change *)
+        "\tmov rax, qword [rbp + 8 * 2]\n" ^
+        (Printf.sprintf
+        "\tmov rax, qword [rax + 8 * %s]\n" 
+        (string_of_int(major))) ^
+        (Printf.sprintf
+        "\tmov rax, qword [rax + 8 * %s]\n" 
+        (string_of_int(minor)))
       | ScmIf' (test, dit, dif) -> raise X_not_yet_implemented
       | ScmSeq' exprs' ->
          String.concat "\n"
