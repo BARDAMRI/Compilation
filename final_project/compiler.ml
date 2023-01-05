@@ -542,7 +542,7 @@ module Code_Generation : CODE_GENERATION= struct
         let asm_expr = run params env expr' in
         asm_expr ^
         "\tpush rax" ^
-        (run ScmVarGet var') ^
+        (run params env (ScmVarGet' var')) ^
         "\tpop qword[rax]\n" ^
         "\tmov rax, SOB_VOID_ADDRESS\n"
       | ScmLambda' (params', Simple, body) ->
