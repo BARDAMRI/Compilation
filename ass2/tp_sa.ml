@@ -223,17 +223,15 @@ module Tag_Parser : TAG_PARSER = struct
            values = scheme_sexpr_list_of_sexpr_list values in
          tag_parse (ScmPair (ScmPair (ScmSymbol "lambda", ScmPair (names, exprs)), values))
     | ScmPair (ScmSymbol "let*", ScmPair (ScmNil, exprs)) ->
-       tag_parse( ScmPair ( ScmSymbol "lambda" , ScmPair(ScmNil, exprs)) )
+       tag_parse( ScmPair ( ScmSymbol "let" , ScmPair(ScmNil, exprs)))
     | ScmPair (ScmSymbol "let*", ScmPair (ScmPair
                     (ScmPair (var, ScmPair (value, ScmNil)), ScmNil),  exprs)) ->
-       tag_parse (ScmPair
-             ( ScmSymbol "let" , ScmPair ((ScmPair(var ,ScmPair ( value, ScmNil)) ,exprs))))
+       tag_parse (ScmPair(ScmSymbol("let"), ScmPair(ScmPair(ScmPair (var, ScmPair (value, ScmNil)),ScmNil),exprs)))
     | ScmPair (ScmSymbol "let*",
                ScmPair (ScmPair (ScmPair (var,ScmPair (arg, ScmNil)), ribs), exprs)) ->
-       let rest = ScmPair( ScmSymbol "let*" , ScmPair (ribs , exprs)) in 
-       tag_parse( ScmPair ( ScmSymbol "let" ,  ScmPair( ScmPair ( ScmPair (var,ScmPair (arg, ScmNil))
-                                              ,ScmNil),
-                                     ScmPair (rest ,ScmNil))))
+
+             tag_parse (ScmPair(ScmSymbol("let"), ScmPair(ScmPair(ScmPair (var,ScmPair (arg, ScmNil)),ScmNil),ScmPair(ScmPair(ScmSymbol("let*"),ScmPair(ribs,exprs)),ScmNil))))
+  
     | ScmPair (ScmSymbol "letrec", ScmPair (ribs, exprs)) ->
        let (names, values) = names_values ribs in
        let dummy_ribs = scheme_sexpr_list_of_sexpr_list (  List.map ( fun name -> ScmPair( name , ScmPair
@@ -304,7 +302,8 @@ module Tag_Parser : TAG_PARSER = struct
          (ScmSymbol "if", ScmPair (test, ScmPair (dit, ScmPair (dif, ScmNil))))
     | ScmOr ([]) -> ScmBoolean false
     | ScmOr ([expr]) -> sexpr_of_expr expr
-    | ScmOr (exprs) -> ScmPair(ScmSymbol "or" , scheme_sexpr_list_of_sexpr_list(List.map sexpr_of_expr exprs))
+    | ScmOr (exprs) ->
+     ScmPair(ScmSymbol "or" , Reader.scheme_sexpr_list_of_sexpr_list(List.map sexpr_of_expr exprs))
     | ScmSeq([]) -> ScmVoid
     | ScmSeq([expr]) -> sexpr_of_expr expr
     | ScmSeq(exprs) ->
@@ -455,8 +454,14 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
       (* this code does not [yet?] support nested define-expressions *)
       | ScmVarDef(Var v, expr) -> ScmVarDef'(tag_lexical_address_for_var v params env ,
                                              run expr params env)
-      | ScmLambda (params', Simple, expr) -> ScmLambda'(params',Simple,(run expr params'  (params ::  env)))
-      | ScmLambda (params', Opt opt, expr) -> ScmLambda'(params', Opt opt ,(run expr params'  (params ::  env)))
+      | ScmLambda (params', Simple, expr) ->
+         let rest = run expr params' ([params]@env) in
+         ScmLambda'(params', Simple,rest)
+   
+      | ScmLambda (params', Opt opt, expr) ->
+         let rest = run expr (params' @ [opt]) ([params]@env)  in 
+         ScmLambda'(params',Opt opt,rest)
+
       | ScmApplic (proc, args) ->
          ScmApplic' (run proc params env,
                      List.map (fun arg -> run arg params env) args,
@@ -470,16 +475,16 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
     let rec run in_tail = function
       | (ScmConst' _) as orig -> orig
       | (ScmVarGet' _) as orig -> orig
-      | ScmIf' (test, dit, dif) -> ScmIf'(run false test, run in_tail dit, (run in_tail dif))
-      | ScmSeq' [] ->  ScmSeq' ([])
+      | ScmIf' (test, dit, dif) -> ScmIf'(run false test, run in_tail dit, run in_tail dif)
+      | ScmSeq' [] as orig ->  orig
       | ScmSeq' (expr :: exprs) ->  ScmSeq'(runl in_tail expr exprs )
-      | ScmOr' [] -> ScmOr' []
+      | ScmOr' [] as orig -> orig
       | ScmOr' (expr :: exprs) -> ScmOr'(runl in_tail expr exprs)
       | ScmVarSet' (var', expr') -> ScmVarSet'(var',run false expr')
       | ScmVarDef' (var', expr') -> ScmVarDef'(var',run false expr')
       | (ScmBox' _) as expr' -> expr' (* idan *) 
       | (ScmBoxGet' _) as expr' -> expr' (* idan *)
-      | ScmBoxSet' (var', expr') -> ScmBoxSet' (var', run true expr') (* idan *)
+      | ScmBoxSet' (var', expr') -> expr' (*ScmBoxSet' (var', run true expr') (* idan *) *)
       | ScmLambda' (params, Simple, expr) ->  ScmLambda'(params, Simple , (run true expr))
       | ScmLambda' (params, Opt opt, expr) -> ScmLambda' (params, Opt opt ,(run true expr))
       | ScmApplic' (proc, args, app_kind) ->
@@ -569,15 +574,30 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
 
   let should_box_var name expr params = (* idan *)
     let (reads , writes)  = find_reads_and_writes name expr params in
-    let has_in_same_env =
-      List.exists
-        ( fun (read , read_env ) ->
-          List.exists
-            ( fun (write , write_env )  ->
-              read_env = write_env) writes) reads in 
-    has_in_same_env ;;
+    let r_w_pairs =  cross_product writes reads in
+    let rec varrib name env =
+       match env with 
+      | [] -> raise (X_this_should_not_happen "should box error, env should'nt be empty")
+      | rib :: rest ->
+         if (List.mem name rib)
+         then (rib)
+         else var_rib name rest in
+    let rec same_rib name env env2 = 
+      (var_rib name env) == (var_rib name env2) in
+    let rec run exp = 
+      match exp with
+       | [] -> false
+       | ((Var' (_, (Param(_))), _), (Var' (_, (Param(_))), _)) :: pairs -> run pairs
+       | ((Var' (_, (Bound(_, _))), _),  (Var' (_, (Param(_))), _)) :: pairs -> true
+       | ((Var' (_, (Param(_))), _), (Var' (_, (Bound(_, _))), _)) :: pairs -> true 
+       | ((Var' (_, (Bound(_, _))), env1), (Var' (_, (Bound(_, _))), env2)) :: pairs -> 
+         if (not (same_rib name env1 env2)) then true else (run pairs)
+       | _ -> raise (X_this_should_not_happen "should_box_var") in
+    
+    run r_w_pairs;;
 
-  let box_sets_and_gets name body =
+  
+    let box_sets_and_gets name body =
     let rec run expr =
       match expr with
       | ScmConst' _ -> expr
@@ -713,6 +733,11 @@ let rec sexpr_of_expr' = function
      let dif = sexpr_of_expr' dif in
      ScmPair
        (ScmSymbol "if", ScmPair (test, ScmPair (dit, ScmPair (dif, ScmNil))))
+ | ScmOr'([]) -> ScmBoolean false
+ | ScmOr'([expr']) -> sexpr_of_expr' expr'
+ | ScmOr'(exprs) ->
+    ScmPair (ScmSymbol "or", Reader.scheme_sexpr_list_of_sexpr_list
+                (List.map sexpr_of_expr' exprs))
   | ScmSeq' ([]) -> ScmVoid
   | ScmSeq' ([expr]) -> sexpr_of_expr' expr
   | ScmSeq' (exprs) ->
