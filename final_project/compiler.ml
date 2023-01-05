@@ -54,13 +54,12 @@ module Code_Generation : CODE_GENERATION= struct
     | [] -> []
     | s -> run (s, n, (fun s -> s));;
 
-  let remove_duplicates =
-    let filt list =
-      List.fold_left ( fun list sexpr ->
-                       if (not (List.mem sexpr list))
-                          then list@[sxpr]
-                       else list ) [] list);;
-
+  let remove_duplicates = 
+    let filt list = List.fold_left (fun full sexpr -> 
+                                    if (not (List.mem sexpr full))
+                                      then full @ [sexpr]
+                                  else full) [] list in fun list -> filt list;;
+                      
   let collect_constants = raise X_not_yet_implemented;;
 
   let add_sub_constants = (* takes a list of sexpr - and return a larger list with each sub sexpr of each original sexpr*)
