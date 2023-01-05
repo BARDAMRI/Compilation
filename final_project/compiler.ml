@@ -494,11 +494,31 @@ module Code_Generation : CODE_GENERATION= struct
             | None -> run params env (ScmConst' (ScmBoolean false)))
          in asm_code
       | ScmVarSet' (Var' (v, Free), expr') ->
-         raise X_not_yet_implemented
+        let asm_expr = run params env expr' in
+        let label = search_free_var_table v free_vars in
+        asm_expr ^
+        (Printf.sprintf
+          "\tmov rax, qword [%s]\n"
+          label) ^
+        "\tmov rax, sob_void\n"
       | ScmVarSet' (Var' (v, Param minor), expr') ->
-         raise X_not_yet_implemented
+        let asm_expr = run params env expr' in
+        asm_expr ^
+        (Printf.sprintf 
+        "\tmov rax, qword [rbp +8 * (4 + %s)]\n" 
+        (string_of_int(minor))) ^
+        "\tmov rax, sob_void\n"
       | ScmVarSet' (Var' (v, Bound (major, minor)), expr') ->
-         raise X_not_yet_implemented
+        let asm_expr = run params env expr' in
+        asm_expr ^
+        "\tmov rax, qword [rbp + 8 * 2]\n" ^
+        (Printf.sprintf
+        "\tmov rax, qword [rax + 8 * %s]\n" 
+        (string_of_int(major))) ^
+        (Printf.sprintf
+        "\tmov rax, qword [rax + 8 * %s]\n" 
+        (string_of_int(minor))) ^
+        "\tmov rax, sob_void\n"
       | ScmVarDef' (Var' (v, Free), expr') ->
          let label = search_free_var_table v free_vars in
          (run params env expr')
