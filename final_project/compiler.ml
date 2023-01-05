@@ -73,7 +73,6 @@ module Code_Generation : CODE_GENERATION= struct
     | ScmOr' exprs -> runs exprs
     | ScmVarSet' (_, expr) -> run expr 
     | ScmVarDef' (_, expr) -> run expr 
-    | ScmVarDef' _ -> []
     | ScmBox' _ -> []
     | ScmBoxGet' _ -> []
     | ScmBoxSet' (_, expr) -> run expr
@@ -116,8 +115,20 @@ module Code_Generation : CODE_GENERATION= struct
     | QuadFloat of float
     | ConstPtr of int;;
 
-  let search_constant_address = raise X_not_yet_implemented;; (* search for procedure addr of constant in constant table, this should return the addr of the constant *)
+  let search_constant_address = (* cahnge *)
+    (* search for procedure addr of constant in constant table, this should return the addr of the constant *)
+      let rec search sym table = match table with
+      | [] -> 9999 (* should not happen*)
+      | sexpr::sexprs -> 
+        let (expr, loc, repr) = sexpr in 
+        if (expr == sym)
+          then loc
+      else (search sym sexprs) in
+      fun sym table ->
+        (search sym table);;
 
+
+  ;; 
   let const_repr sexpr loc table = match sexpr with
     | ScmVoid -> ([RTTI "T_void"], 1)
     | ScmNil -> ([RTTI "T_nil"], 1)
