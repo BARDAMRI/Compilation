@@ -1,3 +1,5 @@
+(* Most implementation needs to be done here*)
+#use "tp_sa.ml"
 let file_to_string input_file =
   let in_channel = open_in input_file in
   let rec run () =
@@ -61,7 +63,7 @@ module Code_Generation : CODE_GENERATION= struct
 
   let collect_constants = raise X_not_yet_implemented;;
 
-  let add_sub_constants =
+  let add_sub_constants = (* takes a list of sexpr - and return a larger list with each sub sexpr of each original sexpr*)
     let rec run sexpr = match sexpr with
       | ScmVoid -> raise X_not_yet_implemented
       | ScmNil -> raise X_not_yet_implemented
@@ -86,7 +88,7 @@ module Code_Generation : CODE_GENERATION= struct
     | QuadFloat of float
     | ConstPtr of int;;
 
-  let search_constant_address = raise X_not_yet_implemented;;
+  let search_constant_address = raise X_not_yet_implemented;; (* search for procedure addr of constant in constant table, this should return the addr of the constant *)
 
   let const_repr sexpr loc table = match sexpr with
     | ScmVoid -> ([RTTI "T_void"], 1)
@@ -403,7 +405,7 @@ module Code_Generation : CODE_GENERATION= struct
   let make_tc_applic_recycle_frame_done =
     make_make_label ".L_tc_recycle_frame_done";;
 
-  let code_gen exprs' =
+  let code_gen exprs' = (* most work will be here *)
     let consts = make_constants_table exprs' in
     let free_vars = make_free_vars_table exprs' in
     let rec run params env = function

@@ -545,7 +545,7 @@ bind_primitive:
         LEAVE
         ret
 
-;;; PLEASE IMPLEMENT THIS PROCEDURE
+;;; PLEASE IMPLEMENT THIS PROCEDURE - X_not_yet_implemented
 L_code_ptr_bin_apply:
 	
 L_code_ptr_is_null:
