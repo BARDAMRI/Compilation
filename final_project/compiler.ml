@@ -73,7 +73,6 @@ module Code_Generation : CODE_GENERATION= struct
     | ScmOr' exprs -> runs exprs
     | ScmVarSet' (_, expr) -> run expr 
     | ScmVarDef' (_, expr) -> run expr 
-    | ScmVarDef' (_, expr) -> run expr
     | ScmVarDef' _ -> []
     | ScmBox' _ -> []
     | ScmBoxGet' _ -> []
