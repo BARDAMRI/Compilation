@@ -493,7 +493,7 @@ module Code_Generation : CODE_GENERATION= struct
             (* and just in case someone messed up the tag-parser: *)
             | None -> run params env (ScmConst' (ScmBoolean false)))
          in asm_code
-      | ScmVarSet' (Var' (v, Free), expr') ->
+      | ScmVarSet' (Var' (v, Free), expr') -> (* change *)
         let asm_expr = run params env expr' in
         let label = search_free_var_table v free_vars in
         asm_expr ^
@@ -501,14 +501,14 @@ module Code_Generation : CODE_GENERATION= struct
           "\tmov rax, qword [%s]\n"
           label) ^
         "\tmov rax, sob_void\n"
-      | ScmVarSet' (Var' (v, Param minor), expr') ->
+      | ScmVarSet' (Var' (v, Param minor), expr') -> (* change *)
         let asm_expr = run params env expr' in
         asm_expr ^
         (Printf.sprintf 
         "\tmov rax, qword [rbp +8 * (4 + %s)]\n" 
         (string_of_int(minor))) ^
         "\tmov rax, sob_void\n"
-      | ScmVarSet' (Var' (v, Bound (major, minor)), expr') ->
+      | ScmVarSet' (Var' (v, Bound (major, minor)), expr') -> (* change *)
         let asm_expr = run params env expr' in
         asm_expr ^
         "\tmov rax, qword [rbp + 8 * 2]\n" ^
@@ -528,12 +528,23 @@ module Code_Generation : CODE_GENERATION= struct
          raise X_not_yet_supported
       | ScmVarDef' (Var' (v, Bound (major, minor)), expr') ->
          raise X_not_yet_supported
-      | ScmBox' (Var' (v, Param minor)) -> raise X_not_yet_implemented
+      | ScmBox' (Var' (v, Param minor)) -> (* change *)
+        "\tMALLOC rax, WORD_SIZE\n" ^
+        (Printf.sprintf
+        "\tmov rdx, qword[rbp + WORD_SIZE * ( 4 + %s)]\n" 
+        (string_of_int(minor))) ^
+        "\tmov qword[rax], rdx\n"
       | ScmBox' _ -> raise X_not_yet_implemented
       | ScmBoxGet' var' ->
          (run params env (ScmVarGet' var'))
          ^ "\tmov rax, qword [rax]\n"
-      | ScmBoxSet' (var', expr') -> raise X_not_yet_implemented
+      | ScmBoxSet' (var', expr') -> (* change *)
+        let asm_expr = run params env expr' in
+        asm_expr ^
+        "\tpush rax" ^
+        (run ScmVarGet var') ^
+        "\tpop qword[rax]\n" ^
+        "\tmov rax, SOB_VOID_ADDRESS\n"
       | ScmLambda' (params', Simple, body) ->
          let label_loop_env = make_lambda_simple_loop_env ()
          and label_loop_env_end = make_lambda_simple_loop_env_end ()
