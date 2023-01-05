@@ -60,7 +60,37 @@ module Code_Generation : CODE_GENERATION= struct
                                       then full @ [sexpr]
                                   else full) [] list in fun list -> filt list;;
                       
-  let collect_constants = raise X_not_yet_implemented;;
+  let collect_constants = (* change - function only search for ScmConst right now*)
+    let rec run = function 
+    | ScmConst' expr -> [expr]
+    | ScmVarGet' _ -> []
+    | ScmIf' (test, dit, dif ) -> 
+      let nt1 = run test in 
+      let nt2 = run dit in 
+      let nt3 = run dif in 
+      nt1 @ nt2 @ nt3  
+    | ScmSeq' exprs -> runs exprs
+    | ScmOr' exprs -> runs exprs
+    | ScmVarSet' (_, expr) -> run expr 
+    | ScmVarDef' (_, expr) -> run expr 
+    | ScmVarDef' (_, expr) -> run expr
+    | ScmVarDef' _ -> []
+    | ScmBox' _ -> []
+    | ScmBoxGet' _ -> []
+    | ScmBoxSet' (_, expr) -> run expr
+    | ScmLambda' (_, _, expr) -> run expr
+    | ScmApplic' (expr, exprs, _) -> 
+      let fir = run expr in 
+      let rest = runs exprs in 
+      fir @ rest 
+
+    and runs exprs' = 
+      List.fold_left
+      (fun vars expr' -> vars @ (run expr'))
+      []
+      exprs'
+    in fun exprs' ->
+      runs exprs';;
 
   let add_sub_constants = (* takes a list of sexpr - and return a larger list with each sub sexpr of each original sexpr*)
     let rec run sexpr = match sexpr with
