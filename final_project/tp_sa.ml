@@ -30,10 +30,10 @@ type expr =
 
 module type TAG_PARSER = sig
   val tag_parse : sexpr -> expr
-  val print_expr : out_channel -> expr -> unit
-  val print_exprs : out_channel -> expr list -> unit
-  val sprint_expr : 'a -> expr -> string
-  val sprint_exprs : 'a -> expr list -> string    
+  (* val print_expr : out_channel -> expr -> unit *)
+  (* val print_exprs : out_channel -> expr list -> unit *)
+  (* val sprint_expr : 'a -> expr -> string *)
+  (* val sprint_exprs : 'a -> expr list -> string *)
 end;;
 
 module Tag_Parser : TAG_PARSER = struct
@@ -269,7 +269,7 @@ module Tag_Parser : TAG_PARSER = struct
     | sexpr -> raise (X_syntax
                        (Printf.sprintf
                           "Unknown form: \n%a\n"
-                          Reader.sprint_sexpr sexpr));;
+                          sprint_sexpr sexpr));;
 
 end;; (* end of struct Tag_Parser *)
 
@@ -466,7 +466,7 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
   let should_box_var name expr params = (* idan *)
     let (reads , writes)  = find_reads_and_writes name expr params in
     let r_w_pairs =  cross_product writes reads in
-    let rec varrib name env =
+    let rec var_rib name env =
        match env with 
       | [] -> raise (X_this_should_not_happen "should box error, env should'nt be empty")
       | rib :: rest ->
@@ -686,7 +686,7 @@ let rec sexpr_of_expr' = function
   | _ -> raise (X_syntax "Unknown form of expr' to sexpr");; 
 
 let string_of_expr' expr =
-  Printf.sprintf "%a" Reader.sprint_sexpr (sexpr_of_expr' expr);;
+  Printf.sprintf "%a" sprint_sexpr (sexpr_of_expr' expr);;
 
 let print_expr' chan expr =
   output_string chan

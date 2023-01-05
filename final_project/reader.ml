@@ -28,21 +28,23 @@ type sexpr =
   | ScmVector of (sexpr list)
   | ScmPair of (sexpr * sexpr);;
 
+  type string_part =
+    | Static of string
+    | Dynamic of sexpr;;
+
+    
 module type READER = sig
   val nt_sexpr : sexpr PC.parser
-  val print_sexpr : out_channel -> sexpr -> unit
-  val print_sexprs : out_channel -> sexpr list -> unit
-  val sprint_sexpr : 'a -> sexpr -> string
-  val sprint_sexprs : 'a -> sexpr list -> string
+  (* val print_sexpr : out_channel -> sexpr -> unit *)
+  (* val print_sexprs : out_channel -> sexpr list -> unit *)
+  (* val sprint_sexpr : 'a -> sexpr -> string *)
+  (* val sprint_sexprs : 'a -> sexpr list -> string *)
   val scheme_sexpr_list_of_sexpr_list : sexpr list -> sexpr 
 end;; (* end of READER signature *)
 
 module Reader : READER = struct
   open PC;;
 
-  type string_part =
-    | Static of string
-    | Dynamic of sexpr;;
 
   let unitify nt = pack nt (fun _ -> ());;
 
@@ -460,3 +462,85 @@ module Reader : READER = struct
     List.fold_right (fun car cdr -> ScmPair (car, cdr)) sexprs ScmNil;;
 
 end;; (* end of struct Reader *)
+
+let rec string_of_sexpr = function
+    | ScmVoid -> "#<void>"
+    | ScmNil -> "()"
+    | ScmBoolean(false) -> "#f"
+    | ScmBoolean(true) -> "#t"
+    | ScmChar('\n') -> "#\\newline"
+    | ScmChar('\r') -> "#\\return"
+    | ScmChar('\012') -> "#\\page"
+    | ScmChar('\t') -> "#\\tab"
+    | ScmChar(' ') -> "#\\space"
+    | ScmChar(ch) ->
+       if (ch < ' ')
+       then let n = int_of_char ch in
+            Printf.sprintf "#\\x%x" n
+       else Printf.sprintf "#\\%c" ch
+    | ScmString(str) ->
+       Printf.sprintf "\"%s\""
+         (String.concat ""
+            (List.map
+               (function
+                | '\n' -> "\\n"
+                | '\012' -> "\\f"
+                | '\r' -> "\\r"
+                | '\t' -> "\\t"
+                | '\"' -> "\\\""
+                | ch ->
+                   if (ch < ' ')
+                   then Printf.sprintf "\\x%x;" (int_of_char ch)
+                   else Printf.sprintf "%c" ch)
+               (list_of_string str)))
+    | ScmSymbol(sym) -> sym
+    | ScmNumber(ScmRational(0, _)) -> "0"
+    | ScmNumber(ScmRational(num, 1)) -> Printf.sprintf "%d" num
+    | ScmNumber(ScmRational(num, -1)) -> Printf.sprintf "%d" (- num)
+    | ScmNumber(ScmRational(num, den)) -> Printf.sprintf "%d/%d" num den
+    | ScmNumber(ScmReal(x)) -> Printf.sprintf "%f" x
+    | ScmVector(sexprs) ->
+       let strings = List.map string_of_sexpr sexprs in
+       let inner_string = String.concat " " strings in
+       Printf.sprintf "#(%s)" inner_string
+    | ScmPair(ScmSymbol "quote",
+              ScmPair(sexpr, ScmNil)) ->
+       Printf.sprintf "'%s" (string_of_sexpr sexpr)
+    | ScmPair(ScmSymbol "quasiquote",
+              ScmPair(sexpr, ScmNil)) ->
+       Printf.sprintf "`%s" (string_of_sexpr sexpr)
+    | ScmPair(ScmSymbol "unquote",
+              ScmPair(sexpr, ScmNil)) ->
+       Printf.sprintf ",%s" (string_of_sexpr sexpr)
+    | ScmPair(ScmSymbol "unquote-splicing",
+              ScmPair(sexpr, ScmNil)) ->
+       Printf.sprintf ",@%s" (string_of_sexpr sexpr)
+    | ScmPair(car, cdr) ->
+       string_of_sexpr' (string_of_sexpr car) cdr 
+  and string_of_sexpr' car_string = function
+    | ScmNil -> Printf.sprintf "(%s)" car_string
+    | ScmPair(cadr, cddr) ->
+       let new_car_string =
+         Printf.sprintf "%s %s" car_string (string_of_sexpr cadr) in
+       string_of_sexpr' new_car_string cddr
+    | cdr ->
+       let cdr_string = (string_of_sexpr cdr) in
+       Printf.sprintf "(%s . %s)" car_string cdr_string;;
+
+  let print_sexpr chan sexpr = output_string chan (string_of_sexpr sexpr);;
+
+  let print_sexprs chan sexprs =
+    output_string chan
+      (Printf.sprintf "[%s]"
+         (String.concat "; "
+            (List.map string_of_sexpr sexprs)));;
+
+  let sprint_sexpr _ sexpr = string_of_sexpr sexpr;;
+
+  let sprint_sexprs chan sexprs =
+   Printf.sprintf "[%s]"
+     (String.concat "; "
+        (List.map string_of_sexpr sexprs));;
+
+(* end-of-input *)
+

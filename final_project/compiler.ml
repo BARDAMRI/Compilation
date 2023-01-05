@@ -54,7 +54,7 @@ module Code_Generation : CODE_GENERATION= struct
     | [] -> []
     | s -> run (s, n, (fun s -> s));;
 
-  let remove_duplicates = 
+  let remove_duplicates = (* change *)
     let filt list = List.fold_left (fun full sexpr -> 
                                     if (not (List.mem sexpr full))
                                       then full @ [sexpr]
@@ -64,16 +64,16 @@ module Code_Generation : CODE_GENERATION= struct
 
   let add_sub_constants = (* takes a list of sexpr - and return a larger list with each sub sexpr of each original sexpr*)
     let rec run sexpr = match sexpr with
-      | ScmVoid -> raise X_not_yet_implemented
-      | ScmNil -> raise X_not_yet_implemented
+      | ScmVoid -> [] (* change *)
+      | ScmNil -> [] (* change *)
       | ScmBoolean _ | ScmChar _ | ScmString _ | ScmNumber _ ->
          [sexpr]
       | ScmSymbol sym ->
          [ScmString(sym)]
       | ScmPair (car, cdr) -> (run car) @ (run cdr) @ [sexpr]
       | ScmVector sexprs ->
-         let nt_res = runs sexprs in
-         nt_res@sexpr
+         let nt_res = runs sexprs in (* change *)
+         nt_res@[sexpr]
     and runs sexprs =
       List.fold_left (fun full sexpr -> full @ (run sexpr)) [] sexprs
     in fun exprs' ->
@@ -285,7 +285,7 @@ module Code_Generation : CODE_GENERATION= struct
          let rest =run expr' in
          [v]@rest
       | ScmVarSet' (_, expr') ->
-         run epr'
+         run expr'
       | ScmVarDef' (Var' (v, Free), expr') ->
           let rest =run expr' in
          [v]@rest
