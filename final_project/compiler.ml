@@ -448,7 +448,9 @@ module Code_Generation : CODE_GENERATION= struct
     let consts = make_constants_table exprs' in
     let free_vars = make_free_vars_table exprs' in
     let rec run params env = function
-      | ScmConst' sexpr -> raise X_not_yet_implemented
+      | ScmConst' sexpr -> (* change *)
+        let addr = search_constant_address sexpr consts in 
+        (Printf.sprintf "\tmov rax,L_constants + %s\n" (string_of_int (addr)))
       | ScmVarGet' (Var' (v, Free)) ->
          let label = search_free_var_table v free_vars in
          Printf.sprintf
