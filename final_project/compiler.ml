@@ -642,8 +642,8 @@ module Code_Generation : CODE_GENERATION= struct
                       "") ^
       (Printf.sprintf "\tpush %d\n" numOfArgs) ^
       (run numOfArgs (env + 1) proc) ^
-      "\tpush qword[rax+TYPE_SIZE]\n" ^ (* need to remove the TYPE_SIZE!*)
-      (Printf.sprintf "\tcall qword[rax+TYPE_SIZE+%d]\n" word_size)^
+      "\tpush qword[rax+TYPE_SIZE]\n" ^ (* TODO - need to remove the TYPE_SIZE!*)
+      (Printf.sprintf "\tcall qword[rax+TYPE_SIZE+%d]\n" word_size) ^ (* TODO - need to remove the TYPE_SIZE!*)
       "\tadd rsp, 8\n" ^
       "\tpop rbx\n" ^ 
       "\tshl rbx, 3\n" ^
