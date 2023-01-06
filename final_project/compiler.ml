@@ -480,7 +480,7 @@ module Code_Generation : CODE_GENERATION= struct
         let label_end_if = make_if_end () in
         "\t; code generated for ScmIf'\n" ^
         asm_test ^
-        "\tcmp rax, 0\n" ^
+        "\tcmp rax, sob_boolean_false\n" ^
         ( Printf.sprintf "\tjne %s\n" label_dif ) ^
         asm_dit ^
         ( Printf.sprintf "\tjmp %s\n" label_end_if ) ^
@@ -577,6 +577,7 @@ module Code_Generation : CODE_GENERATION= struct
          and label_arity_ok = make_lambda_simple_arity_ok ()
          and label_end = make_lambda_simple_end ()
          in
+         "\t; code generated for ScmLambda (Simple)'\n" ^
          "\tmov rdi, (1 + 8 + 8)\t; sob closure\n"
          ^ "\tcall malloc\n"
          ^ "\tpush rax\n"
@@ -629,7 +630,23 @@ module Code_Generation : CODE_GENERATION= struct
          ^ (Printf.sprintf "\tret 8 * (2 + %d)\n" (List.length params'))
          ^ (Printf.sprintf "%s:\t; new closure is in rax\n" label_end)
       | ScmLambda' (params', Opt opt, body) -> raise X_not_yet_implemented
-      | ScmApplic' (proc, args, Non_Tail_Call) -> raise X_not_yet_implemented
+      | ScmApplic' (proc, args, Non_Tail_Call) -> (* change *)
+      let numOfArgs = List.length args in
+      "\t; code generated for ScmApplicNoneTailCall'\n" ^
+      (List.fold_right
+        (fun x acc -> acc ^ 
+                      (run numOfArgs (env + 1) x) ^
+                      "\tpush rax\n") 
+                      args
+                      "") ^
+      (Printf.sprintf "\tpush %d\n" numOfArgs) ^
+      (run numOfArgs (env + 1) proc) ^
+      "\tpush qword[rax+TYPE_SIZE]\n" ^
+      "\tcall qword[rax+TYPE_SIZE+WORDSIZE]\n" ^
+      "\tadd rsp, 8\n" ^
+      "\tpop rbx\n" ^ 
+      "\tshl rbx, 3\n" ^
+      "\tadd rsp, rbx\n"
       | ScmApplic' (proc, args, Tail_Call) -> raise X_not_yet_implemented
     and runs params env exprs' =
       List.map
