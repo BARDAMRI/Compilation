@@ -472,7 +472,21 @@ module Code_Generation : CODE_GENERATION= struct
         (Printf.sprintf
         "\tmov rax, qword [rax + 8 * %s]\n" 
         (string_of_int(minor)))
-      | ScmIf' (test, dit, dif) -> raise X_not_yet_implemented
+      | ScmIf' (test, dit, dif) -> (* change *)
+        let asm_test = run params env test in
+        let asm_dit = run params env dit in
+        let asm_dif = run params env dif in
+        let label_dif = make_if_else () in 
+        let label_end_if = make_if_end () in
+        "\t; code generated for ScmIf'\n" ^
+        asm_test ^
+        "\tcmp rax, 0\n" ^
+        ( Printf.sprintf "\tjne %s\n" label_dif ) ^
+        asm_dit ^
+        ( Printf.sprintf "\tjmp %s\n" label_end_if ) ^
+        ( Printf.sprintf "\t%s\n" label_dif ) ^
+        asm_dif ^
+        ( Printf.sprintf "\t%s\n" label_end_if ) 
       | ScmSeq' exprs' ->
          String.concat "\n"
            (List.map (run params env) exprs')
