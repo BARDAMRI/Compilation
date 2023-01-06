@@ -309,7 +309,7 @@ module Code_Generation : CODE_GENERATION= struct
       ("eq?", "L_code_ptr_eq")
     ];;
 
-  let collect_free_vars =
+  let collect_free_vars = (* change *)
     let rec run = function
       | ScmConst' _ -> []
       | ScmVarGet' (Var' (v, Free)) -> [v]
@@ -450,17 +450,21 @@ module Code_Generation : CODE_GENERATION= struct
     let rec run params env = function
       | ScmConst' sexpr -> (* change *)
         let addr = search_constant_address sexpr consts in 
-        Printf.sprintf "\tmov rax,L_constants + %s\n" (string_of_int (addr))
+        "\t; code generated for ScmConst\n" ^
+        (Printf.sprintf "\tmov rax,L_constants + %s\n" (string_of_int (addr)))
       | ScmVarGet' (Var' (v, Free)) ->
          let label = search_free_var_table v free_vars in
-         Printf.sprintf
+         "\t; code generated for ScmVarGet' (Free))\n" ^
+         (Printf.sprintf
            "\tmov rax, qword [%s]\n"
-           label
+           label)
       | ScmVarGet' (Var' (v, Param minor)) -> (* change *)
-        Printf.sprintf 
+        "\t; code generated for ScmVarGet' (Param)\n" ^
+        (Printf.sprintf 
         "\tmov rax, qword [rbp +8 * (4 + %s)]\n" 
-        (string_of_int(minor))
+        (string_of_int(minor)))
       | ScmVarGet' (Var' (v, Bound (major, minor))) -> (* change *)
+        "\t; code generated for ScmVarGet' (Bound)\n" ^
         "\tmov rax, qword [rbp + 8 * 2]\n" ^
         (Printf.sprintf
         "\tmov rax, qword [rax + 8 * %s]\n" 
@@ -497,6 +501,7 @@ module Code_Generation : CODE_GENERATION= struct
         let asm_expr = run params env expr' in
         let label = search_free_var_table v free_vars in
         asm_expr ^
+        "\t; code generated for ScmVarSet' (Free)\n" ^
         (Printf.sprintf
           "\tmov rax, qword [%s]\n"
           label) ^
@@ -504,6 +509,7 @@ module Code_Generation : CODE_GENERATION= struct
       | ScmVarSet' (Var' (v, Param minor), expr') -> (* change *)
         let asm_expr = run params env expr' in
         asm_expr ^
+        "\t; code generated for ScmVarSet' (Param)\n" ^
         (Printf.sprintf 
         "\tmov rax, qword [rbp +8 * (4 + %s)]\n" 
         (string_of_int(minor))) ^
@@ -511,6 +517,7 @@ module Code_Generation : CODE_GENERATION= struct
       | ScmVarSet' (Var' (v, Bound (major, minor)), expr') -> (* change *)
         let asm_expr = run params env expr' in
         asm_expr ^
+        "\t; code generated for ScmVarSet' (Bound)\n" ^
         "\tmov rax, qword [rbp + 8 * 2]\n" ^
         (Printf.sprintf
         "\tmov rax, qword [rax + 8 * %s]\n" 
@@ -529,6 +536,7 @@ module Code_Generation : CODE_GENERATION= struct
       | ScmVarDef' (Var' (v, Bound (major, minor)), expr') ->
          raise X_not_yet_supported
       | ScmBox' (Var' (v, Param minor)) -> (* change *)
+        "\t; code generated for ScmBox' (Param)\n" ^
         "\tMALLOC rax, WORD_SIZE\n" ^
         (Printf.sprintf
         "\tmov rdx, qword[rbp + WORD_SIZE * ( 4 + %s)]\n" 
@@ -541,6 +549,7 @@ module Code_Generation : CODE_GENERATION= struct
       | ScmBoxSet' (var', expr') -> (* change *)
         let asm_expr = run params env expr' in
         asm_expr ^
+        "\t; code generated for ScmBoxSet'\n" ^
         "\tpush rax" ^
         (run params env (ScmVarGet' var')) ^
         "\tpop qword[rax]\n" ^
