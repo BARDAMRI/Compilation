@@ -1,4 +1,3 @@
-#use "tp_sa.ml";;
-open Tag_Parser;;
-open Semantic_Analysis;;
-let show str = Printf.printf "\n\n%a\n\n" Tag_Parser.print_expr (Tag_Parser.tag_parse (Reader.nt_sexpr str 0).found);;
+#use "compiler.ml";;
+open Code_Generation;;
+Code_Generation.compile_scheme_file "source.scm" "foo.asm";;

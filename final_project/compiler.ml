@@ -551,9 +551,10 @@ module Code_Generation : CODE_GENERATION= struct
          raise X_not_yet_supported
       | ScmBox' (Var' (v, Param minor)) -> (* change *)
         "\t; code generated for ScmBox' (Param)\n" ^
-        "\tMALLOC rax, WORD_SIZE\n" ^
+        (Printf.sprintf "\tMALLOC rax, %d\n" word_size )^ 
         (Printf.sprintf
-        "\tmov rdx, qword[rbp + WORD_SIZE * ( 4 + %s)]\n" 
+        "\tmov rdx, qword[rbp + %d * ( 4 + %s)]\n" 
+        word_size
         (string_of_int(minor))) ^
         "\tmov qword[rax], rdx\n"
       | ScmBox' _ -> raise X_not_yet_implemented
@@ -641,8 +642,8 @@ module Code_Generation : CODE_GENERATION= struct
                       "") ^
       (Printf.sprintf "\tpush %d\n" numOfArgs) ^
       (run numOfArgs (env + 1) proc) ^
-      "\tpush qword[rax+TYPE_SIZE]\n" ^
-      "\tcall qword[rax+TYPE_SIZE+WORDSIZE]\n" ^
+      "\tpush qword[rax+TYPE_SIZE]\n" ^ (* need to remove the TYPE_SIZE!*)
+      (Printf.sprintf "\tcall qword[rax+TYPE_SIZE+%d]\n" word_size)^
       "\tadd rsp, 8\n" ^
       "\tpop rbx\n" ^ 
       "\tshl rbx, 3\n" ^
