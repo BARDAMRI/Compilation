@@ -124,8 +124,13 @@ module Code_Generation : CODE_GENERATION= struct
         if (expr == sym)
           then loc
       else (search sym sexprs) in
-      fun sym table ->
-        (search sym table);;
+      fun sym table -> match sym with
+      | ScmVoid -> 0
+      | ScmNil -> 1
+      | ScmBoolean false -> 2
+      | ScmBoolean true -> 3
+      | ScmChar '\000' -> 4
+      |_ -> (search sym table);;
 
 
   ;; 
