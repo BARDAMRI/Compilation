@@ -118,7 +118,7 @@ module Code_Generation : CODE_GENERATION= struct
   let search_constant_address = (* cahnge *)
     (* search for procedure addr of constant in constant table, this should return the addr of the constant *)
       let rec search sym table = match table with
-      | [] -> 9999 (* should not happen*)
+      | [] -> 9999(* should not happen*)
       | sexpr::sexprs -> 
         let (expr, loc, repr) = sexpr in 
         if (expr == sym)
@@ -451,7 +451,7 @@ module Code_Generation : CODE_GENERATION= struct
       | ScmConst' sexpr -> (* change *)
         let addr = search_constant_address sexpr consts in 
         "\t; code generated for ScmConst\n" ^
-        (Printf.sprintf "\tmov rax,L_constants + %s\n" (string_of_int (addr)))
+        (Printf.sprintf "\tmov rax, L_constants + %d\n" addr)
       | ScmVarGet' (Var' (v, Free)) ->
          let label = search_free_var_table v free_vars in
          "\t; code generated for ScmVarGet' (Free))\n" ^
@@ -642,8 +642,8 @@ module Code_Generation : CODE_GENERATION= struct
                       "") ^
       (Printf.sprintf "\tpush %d\n" numOfArgs) ^
       (run numOfArgs (env + 1) proc) ^
-      "\tpush qword[rax+TYPE_SIZE]\n" ^ (* TODO - need to remove the TYPE_SIZE!*)
-      (Printf.sprintf "\tcall qword[rax+TYPE_SIZE+%d]\n" word_size) ^ (* TODO - need to remove the TYPE_SIZE!*)
+      "\tpush qword[rax+1]\n" ^
+      (Printf.sprintf "\tcall qword[rax+1+%d]\n" word_size) ^
       "\tadd rsp, 8\n" ^
       "\tpop rbx\n" ^ 
       "\tshl rbx, 3\n" ^
