@@ -55,10 +55,11 @@ module Code_Generation : CODE_GENERATION= struct
     | s -> run (s, n, (fun s -> s));;
 
   let remove_duplicates = (* change *)
-    let filt list = List.fold_left (fun full sexpr -> 
+    let run list = List.fold_left (fun full sexpr -> 
                                     if (not (List.mem sexpr full))
                                       then full @ [sexpr]
-                                  else full) [] list in fun list -> filt list;;
+                                  else full) [] list 
+    in fun list -> run list;;
                       
   let collect_constants = (* change - function only search for ScmConst right now*)
     let rec run = function 
@@ -90,18 +91,18 @@ module Code_Generation : CODE_GENERATION= struct
     in fun exprs' ->
       runs exprs';;
 
-  let add_sub_constants = (* takes a list of sexpr - and return a larger list with each sub sexpr of each original sexpr*)
+  let add_sub_constants = (* change - takes a list of sexpr - and return a larger list with each sub sexpr of each original sexpr*)
     let rec run sexpr = match sexpr with
-      | ScmVoid -> [] (* change *)
-      | ScmNil -> [] (* change *)
+      | ScmVoid -> [] 
+      | ScmNil -> [] 
       | ScmBoolean _ | ScmChar _ | ScmString _ | ScmNumber _ ->
          [sexpr]
       | ScmSymbol sym ->
          [ScmString(sym)]
       | ScmPair (car, cdr) -> (run car) @ (run cdr) @ [sexpr]
       | ScmVector sexprs ->
-         let nt_res = runs sexprs in (* change *)
-         nt_res@[sexpr]
+         let nt_res = runs sexprs in 
+         nt_res @ [sexpr]
     and runs sexprs =
       List.fold_left (fun full sexpr -> full @ (run sexpr)) [] sexprs
     in fun exprs' ->
@@ -115,25 +116,26 @@ module Code_Generation : CODE_GENERATION= struct
     | QuadFloat of float
     | ConstPtr of int;;
 
-  let search_constant_address = (* cahnge *)
-    (* search for procedure addr of constant in constant table, this should return the addr of the constant *)
-      let rec search sym table = match table with
-      | [] -> 9999(* should not happen*)
-      | sexpr::sexprs -> 
-        let (expr, loc, repr) = sexpr in 
-        if (expr == sym)
-          then loc
-      else (search sym sexprs) in
-      fun sym table -> match sym with
-      | ScmVoid -> 0
-      | ScmNil -> 1
-      | ScmBoolean false -> 2
-      | ScmBoolean true -> 3
-      | ScmChar '\000' -> 4
-      |_ -> (search sym table);;
+    let search_constant_address = (* change *)
+      let rec search sym table  = match table with
+        | [] -> 
+          raise (X_this_should_not_happen
+                        (Printf.sprintf
+                           "The variable %s was not found in the constants table"
+                           (string_of_sexpr sym)))
+        | (expr, loc, repr) :: rest -> if (expr == sym)
+                                          then loc
+                                        else (search sym rest)
 
+      in fun sym table ->
+        match sym with
+        | ScmVoid -> 0
+        | ScmNil -> 1
+        | ScmBoolean false -> 2
+        | ScmBoolean true -> 3
+        | ScmChar '\000' -> 4
+        | _ -> (search sym table);;
 
-  ;; 
   let const_repr sexpr loc table = match sexpr with
     | ScmVoid -> ([RTTI "T_void"], 1)
     | ScmNil -> ([RTTI "T_nil"], 1)
@@ -232,10 +234,10 @@ module Code_Generation : CODE_GENERATION= struct
             let s = List.map (fun si -> "\n\tdq " ^ (String.concat ", " si)) s in
             String.concat "" s)
       | [RTTI "T_pair"; ConstPtr car; ConstPtr cdr] ->
-         Printf.sprintf "\tdb T_pair\t%s\n\tdq %s + %d, %s + %d"
+         (Printf.sprintf "\tdb T_pair\t%s\n\tdq %s + %d, %s + %d"
            str
            label_start_of_constants_table car
-           label_start_of_constants_table cdr
+           label_start_of_constants_table cdr) 
       | _ -> raise (X_this_should_not_happen "invalid representation!")
     in run;;
 

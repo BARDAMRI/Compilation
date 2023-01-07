@@ -1,2 +1,1 @@
-(define x 4)
-x
+'(a b)'

@@ -1,0 +1,32 @@
+let numOfArgs = List.length args in
+      "\t; code generated for ScmApplicNoneTailCall'\n" ^
+      (List.fold_right
+        (fun x acc -> acc ^ 
+                      (run numOfArgs (env + 1) x) ^
+                      "\tpush rax\n") 
+                      args
+                      "") ^
+      (Printf.sprintf "\tpush %d\n" numOfArgs) ^
+      (run numOfArgs (env + 1) proc) ^
+      "\tpush qword[rax+1]\n" ^
+      (Printf.sprintf "\tcall qword[rax+1+%d]\n" word_size) ^
+      "\tadd rsp, 8\n" ^
+      "\tpop rbx\n" ^ 
+      "\tshl rbx, 3\n" ^
+      "\tadd rsp, rbx\n"
+
+    ; code generated for ScmApplicNoneTailCall
+    ; (List.fold_right
+    ;   (fun x acc -> acc ^ 
+    ;              (run numOfArgs (env + 1) x) 
+    ;              "\tpush rax\n") 
+    ;              args
+    ;              "") 
+    push n
+    ; (run numOfArgs (env + 1) proc) 
+    push qword[rax+1]
+    call qword[rax+1+8]
+    add rsp, 8
+    pop rbx 
+    shl rbx, 3
+    add rsp, rbx

@@ -80,8 +80,16 @@ L_constants:
 	db T_boolean_false
 	db T_boolean_true
 	db T_char, 0x00	; #\x0
-	db T_rational	; 4
-	dq 4, 1
+	db T_string	; "a"
+	dq 1
+	db 0x61
+	db T_string	; "b"
+	dq 1
+	db 0x62
+	db T_pair	; (b)
+	dq L_constants + 999, L_constants + 1
+	db T_pair	; (a b)
+	dq L_constants + 999, L_constants + 26
 
 section .bss
 free_var_0:	; location of null?
@@ -195,8 +203,6 @@ free_var_53:	; location of numerator
 free_var_54:	; location of denominator
 	resq 1
 free_var_55:	; location of eq?
-	resq 1
-free_var_56:	; location of x
 	resq 1
 
 extern printf, fprintf, stdout, stderr, fwrite, exit, putchar
@@ -486,15 +492,7 @@ main:
 	call bind_primitive
 
 	; code generated for ScmConst
-	mov rax,L_constants + 6
-	mov qword [free_var_56], rax
-	mov rax, sob_void
-
-	mov rdi, rax
-	call print_sexpr_if_not_void
-
-	; code generated for ScmVarGet' (Free))
-	mov rax, qword [free_var_56]
+	mov rax, L_constants + 43
 
 	mov rdi, rax
 	call print_sexpr_if_not_void
