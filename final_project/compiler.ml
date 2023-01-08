@@ -55,10 +55,11 @@ module Code_Generation : CODE_GENERATION= struct
     | s -> run (s, n, (fun s -> s));;
 
   let remove_duplicates = (* change *)
-    let run list = List.fold_left (fun full sexpr -> 
-                                    if (not (List.mem sexpr full))
-                                      then full @ [sexpr]
-                                  else full) [] list 
+    let run list = 
+      List.fold_left (fun full sexpr -> 
+        if (not (List.mem sexpr full))
+          then full @ [sexpr]
+        else full) [] list 
     in fun list -> run list;;
                       
   let collect_constants = (* change - function only search for ScmConst right now*)
@@ -118,11 +119,11 @@ module Code_Generation : CODE_GENERATION= struct
 
     let search_constant_address = (* change *)
       let rec search sym table  = match table with
-        | [] -> 
-          raise (X_this_should_not_happen
+        | [] -> -1
+          (* raise (X_this_should_not_happen
                         (Printf.sprintf
                            "The variable %s was not found in the constants table"
-                           (string_of_sexpr sym)))
+                           (string_of_sexpr sym))) *)
         | (expr, loc, repr) :: rest -> if (expr == sym)
                                           then loc
                                         else (search sym rest)
@@ -134,7 +135,8 @@ module Code_Generation : CODE_GENERATION= struct
         | ScmBoolean false -> 2
         | ScmBoolean true -> 3
         | ScmChar '\000' -> 4
-        | _ -> (search sym table);;
+        | _ -> 
+          (search sym table);;
 
   let const_repr sexpr loc table = match sexpr with
     | ScmVoid -> ([RTTI "T_void"], 1)

@@ -1,0 +1,35 @@
+11
+"(letrec ((fact (lambda (n) (if (zero? n) 1 (* n (fact1 (- n 1))))))(fact1 (lambda (n) (if (zero? n) 1 (* n (fact2 (- n 1))))))(fact2 (lambda (n) (if (zero? n) 1 (* n (fact3 (- n 1))))))(fact3 (lambda (n) (if (zero? n) 1 (* n (fact (- n 1))))))) (fact 5))"
+
+15
+"(let* ((a 1) (b 2) (a (+ a b)) (b (* a b))) (list a b))"
+
+16
+"(cond (else e1 e2 e3))"
+
+17
+"(cond ((p? e1) e2 e3) ((q? e4) e5) (else e1 e2 e3))"
+
+18
+"(cond ((a? e1) e2) ((b? e2) e3 e4) ((foo x) => grab) (else e5 e6))"
+
+19
+"(lambda (a b c . d) (a (lambda (x y . z) (a b c x (lambda w (list a b c d e f g x y z w))))))"
+
+21
+"(lambda (x y) (list y (begin (set! y 'moshe) 'yossi) (lambda () x) (lambda (y) (set! x y))))"
+
+24
+"(or e1 e2 e3)"
+
+25
+"(or e1 e2)"
+
+26
+"(or e)"
+
+27
+"(or)"
+
+31
+"(lambda x x x x x x)"
