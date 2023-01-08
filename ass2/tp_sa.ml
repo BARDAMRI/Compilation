@@ -102,9 +102,12 @@ module Tag_Parser : TAG_PARSER = struct
             ScmPair (ScmSymbol "vector", sexprs)
     | sexpr -> sexpr;;
 
+   let rec macro_expand_and_clauses expr = function
+   |[]-> expr
+   |expr' :: exprs -> ScmPair(ScmSymbol "if" , ScmPair (expr, ScmPair(macro_expand_and_clauses expr' exprs, ScmPair(ScmBoolean (false),ScmNil))));;  
    let rec macro_expand_cond_ribs ribs =
     match ribs with
-    | ScmNil -> ScmVoid
+    | ScmNil -> raise (X_syntax "Illegal cond-rib structure")
     | ScmPair (ScmPair (ScmSymbol "else", exprs), ribs) ->
        (ScmPair (ScmSymbol "begin", exprs))
     | ScmPair (ScmPair (expr,
@@ -253,14 +256,12 @@ module Tag_Parser : TAG_PARSER = struct
        let exprs = List.fold_right ( fun set_bangs exprs -> ScmPair ( set_bangs , exprs))
            set_bangs exprs in
        tag_parse(ScmPair ( ScmSymbol "let" , ScmPair ( dummy_ribs , exprs)))
-    | ScmPair (ScmSymbol "and", ScmNil) -> ScmConst (ScmBoolean true)
+     | ScmPair (ScmSymbol "and", ScmNil) -> tag_parse (ScmBoolean true)
     | ScmPair (ScmSymbol "and" , ScmPair ( expr , ScmNil )) -> tag_parse (expr)
     | ScmPair (ScmSymbol "and", ScmPair ( expr, exprs)) ->
        let rest = ScmPair ( ScmSymbol "and" , exprs ) in
        tag_parse (ScmPair( ScmSymbol "if" ,  ScmPair ( expr ,
-                                                ScmPair ( rest , ScmPair (ScmBoolean false, ScmNil )))))
-
-   | ScmPair (ScmSymbol "cond", ribs) ->
+                                                       ScmPair ( rest , ScmPair (ScmBoolean false, ScmNil )))))| ScmPair (ScmSymbol "cond", ribs) ->
       tag_parse (macro_expand_cond_ribs ribs)
     | ScmPair (proc, args) ->
        let proc =
@@ -467,7 +468,7 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
          ScmLambda'(params', Simple,rest)
    
       | ScmLambda (params', Opt opt, expr) ->
-         let rest = run expr (params' @ [opt]) ([params]@env)  in 
+         let rest = run expr (params' @ [opt]) ([params]@env)   in 
          ScmLambda'(params',Opt opt,rest)
 
       | ScmApplic (proc, args) ->
@@ -492,7 +493,7 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
       | ScmVarDef' (var', expr') -> ScmVarDef'(var',run false expr')
       | (ScmBox' _) as expr' -> expr' (* idan *) 
       | (ScmBoxGet' _) as expr' -> expr' (* idan *)
-      | ScmBoxSet' (var', expr') -> expr' (*ScmBoxSet' (var', run true expr') (* idan *) *)
+      | ScmBoxSet' (var', expr') -> ScmBoxSet' (var', run false expr') (* idan *) 
       | ScmLambda' (params, Simple, expr) ->  ScmLambda'(params, Simple , (run true expr))
       | ScmLambda' (params, Opt opt, expr) -> ScmLambda' (params, Opt opt ,(run true expr))
       | ScmApplic' (proc, args, app_kind) ->
@@ -693,13 +694,13 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
            (fun body name -> box_sets_and_gets name body)
            (auto_box expr')
            box_these in
-       let new_sets = make_sets box_these params in
+       let new_sets = make_sets box_these all_params in
        let new_body = 
          match box_these, new_body with
          | [], _ -> new_body
          | _, ScmSeq' exprs -> ScmSeq' (new_sets @ exprs)
          | _, _ -> ScmSeq'(new_sets @ [new_body]) in
-       ScmLambda' (all_params, Simple, new_body)
+       ScmLambda' (params, Opt opt, new_body)
     | ScmApplic' (proc, args, app_kind) ->
        ScmApplic' (auto_box proc, List.map auto_box args, app_kind);;
 
