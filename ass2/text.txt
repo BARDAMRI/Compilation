@@ -2,3 +2,4 @@
 open Tag_Parser;;
 open Semantic_Analysis;;
 let show str = Printf.printf "\n\n%a\n\n" Tag_Parser.print_expr (Tag_Parser.tag_parse (Reader.nt_sexpr str 0).found);;
+let show str = Semantic_Analysis.semantics (Tag_Parser.tag_parse (Reader.nt_sexpr str 0).found);;

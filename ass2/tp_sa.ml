@@ -191,6 +191,13 @@ module Tag_Parser : TAG_PARSER = struct
        (match (scheme_list_to_ocaml sexprs) with
         | (sexprs', ScmNil) -> ScmSeq(List.map tag_parse sexprs')
         | _ -> raise (X_syntax "Improper sequence"))
+   | ScmPair (ScmSymbol "or", ScmNil) -> ScmConst(ScmBoolean false)
+   | ScmPair (ScmSymbol "or", ScmPair (sexpr, ScmNil)) ->
+      tag_parse sexpr
+   | ScmPair (ScmSymbol "or", sexprs) ->
+      (match (scheme_list_to_ocaml sexprs) with
+      | (sexprs', ScmNil) -> ScmOr(List.map tag_parse sexprs')
+      | _ -> raise (X_syntax "Improper sequence"))
     | ScmPair (ScmSymbol "set!",
                ScmPair (ScmSymbol var,
                         ScmPair (expr, ScmNil))) ->
@@ -246,14 +253,15 @@ module Tag_Parser : TAG_PARSER = struct
        let exprs = List.fold_right ( fun set_bangs exprs -> ScmPair ( set_bangs , exprs))
            set_bangs exprs in
        tag_parse(ScmPair ( ScmSymbol "let" , ScmPair ( dummy_ribs , exprs)))
-    | ScmPair (ScmSymbol "and", ScmNil) -> tag_parse (ScmBoolean true)
+    | ScmPair (ScmSymbol "and", ScmNil) -> ScmConst (ScmBoolean true)
     | ScmPair (ScmSymbol "and" , ScmPair ( expr , ScmNil )) -> tag_parse (expr)
     | ScmPair (ScmSymbol "and", ScmPair ( expr, exprs)) ->
        let rest = ScmPair ( ScmSymbol "and" , exprs ) in
        tag_parse (ScmPair( ScmSymbol "if" ,  ScmPair ( expr ,
-                                                       ScmPair ( rest , ScmPair (ScmBoolean false, ScmNil )))))
-    | ScmPair (ScmSymbol "cond", ribs) ->
-       tag_parse (macro_expand_cond_ribs ribs)
+                                                ScmPair ( rest , ScmPair (ScmBoolean false, ScmNil )))))
+
+   | ScmPair (ScmSymbol "cond", ribs) ->
+      tag_parse (macro_expand_cond_ribs ribs)
     | ScmPair (proc, args) ->
        let proc =
          (match proc with
@@ -575,7 +583,7 @@ module Semantic_Analysis : SEMANTIC_ANALYSIS = struct
   let should_box_var name expr params = (* idan *)
     let (reads , writes)  = find_reads_and_writes name expr params in
     let r_w_pairs =  cross_product writes reads in
-    let rec varrib name env =
+    let rec var_rib name env =
        match env with 
       | [] -> raise (X_this_should_not_happen "should box error, env should'nt be empty")
       | rib :: rest ->
