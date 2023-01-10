@@ -657,7 +657,23 @@ module Code_Generation : CODE_GENERATION= struct
       "\tpop rbx\n" ^ 
       "\tshl rbx, 3\n" ^
       "\tadd rsp, rbx\n"
-      | ScmApplic' (proc, args, Tail_Call) -> raise X_not_yet_implemented
+      | ScmApplic' (proc, args, Tail_Call) -> 
+      | ScmApplic' (proc, args, Tail_Call) ->
+        let numOfArgs = List.length args in
+        "\t; code generated for ScmApplic' (Tail_Call)\n" ^
+        (List.fold_right
+          (fun x acc -> acc ^ 
+                  (run numOfArgs (env + 1) x) ^
+                        "\tpush rax\n") 
+                        args
+                        "") ^
+        (run numOfArgs (env + 1) proc) ^
+        "\tjmp qword[rax+1]\n" ^
+        "\tadd rsp, 8\n" ^
+        "\tpop rbx\n" ^ 
+        "\tshl rbx, 3\n" ^
+        "\tadd rsp, rbx\n"
+
     and runs params env exprs' =
       List.map
         (fun expr' ->
@@ -698,4 +714,7 @@ module Code_Generation : CODE_GENERATION= struct
 end;; (* end of Code_Generation struct *)
 
 (* end-of-input *)
+
+
+
 
