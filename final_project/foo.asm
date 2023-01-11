@@ -83,18 +83,10 @@ L_constants:
 	db T_string	; "a"
 	dq 1
 	db 0x61
-	db T_string	; "b"
-	dq 1
-	db 0x62
-	db T_string	; "c"
-	dq 1
-	db 0x63
-	db T_pair	; (c)
-	dq L_constants + -1, L_constants + 1
-	db T_pair	; (b c)
-	dq L_constants + -1, L_constants + 36
-	db T_pair	; (a b c)
-	dq L_constants + -1, L_constants + 53
+	db T_symbol	; a
+	dq L_constants + 6
+	db T_pair	; (a)
+	dq L_constants + 16, L_constants + 1
 
 section .bss
 free_var_0:	; location of null?
@@ -497,7 +489,7 @@ main:
 	call bind_primitive
 
 	; code generated for ScmConst
-	mov rax, L_constants + 70
+	mov rax, L_constants + 25
 
 	mov rdi, rax
 	call print_sexpr_if_not_void

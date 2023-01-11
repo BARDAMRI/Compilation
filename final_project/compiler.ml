@@ -86,7 +86,7 @@ module Code_Generation : CODE_GENERATION= struct
 
     and runs exprs' = 
       List.fold_left
-      (fun vars expr' -> vars @ (run expr'))
+      (fun vars expr' -> vars @ run expr')
       []
       exprs'
     in fun exprs' ->
@@ -94,12 +94,12 @@ module Code_Generation : CODE_GENERATION= struct
 
   let add_sub_constants = (* change - takes a list of sexpr - and return a larger list with each sub sexpr of each original sexpr*)
     let rec run sexpr = match sexpr with
-      | ScmVoid -> [] 
-      | ScmNil -> [] 
+      | ScmVoid -> [ScmVoid] 
+      | ScmNil -> [ScmNil] 
       | ScmBoolean _ | ScmChar _ | ScmString _ | ScmNumber _ ->
          [sexpr]
       | ScmSymbol sym ->
-         [ScmString(sym)]
+        [ScmString sym] @ [sexpr]
       | ScmPair (car, cdr) -> (run car) @ (run cdr) @ [sexpr]
       | ScmVector sexprs ->
          let nt_res = runs sexprs in 
@@ -119,14 +119,14 @@ module Code_Generation : CODE_GENERATION= struct
 
     let search_constant_address = (* change *)
       let rec search sym table  = match table with
-        | [] -> -1
-          (* raise (X_this_should_not_happen
+        | [] -> raise (X_this_should_not_happen
                         (Printf.sprintf
                            "The variable %s was not found in the constants table"
-                           (string_of_sexpr sym))) *)
-        | (expr, loc, repr) :: rest -> if (expr == sym)
-                                          then loc
-                                        else (search sym rest)
+                           (string_of_sexpr sym)))
+        | (expr, loc, _) :: rest -> 
+          if (not (expr <> sym)) 
+            then loc
+          else (search sym rest)
 
       in fun sym table ->
         match sym with
@@ -135,8 +135,7 @@ module Code_Generation : CODE_GENERATION= struct
         | ScmBoolean false -> 2
         | ScmBoolean true -> 3
         | ScmChar '\000' -> 4
-        | _ -> 
-          (search sym table);;
+        | _ -> (search sym table);;
 
   let const_repr sexpr loc table = match sexpr with
     | ScmVoid -> ([RTTI "T_void"], 1)
