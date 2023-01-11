@@ -566,7 +566,14 @@ module Code_Generation : CODE_GENERATION= struct
         word_size
         (string_of_int(minor))) ^
         "\tmov qword[rax], rdx\n"
-      | ScmBox' _ -> (X_syntax "error with ScmBox' in code_gen. This souldn not happen")
+      | ScmBox' _ ->
+        let label = make_lambda_simple_code() in
+        "\t; code generated for ScmBox\n" ^
+        "\tmov rdi, qword [rsp]\n"^
+        "\tpush rdi\n"^
+        "\tmov rdi, rsp\n"^
+        (Printf.sprintf "\tmov rsi, %s\n" label)^
+        "\tcall box\n"c
       | ScmBoxGet' var' ->
          (run params env (ScmVarGet' var'))
          ^ "\tmov rax, qword [rax]\n"
