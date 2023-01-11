@@ -2,7 +2,7 @@
 open Tag_Parser;;
 open Semantic_Analysis;;
 let showRed str = (Reader.nt_sexpr str 0).found;;
-let showTag str = Printf.printf "\n\n%a\n\n" Tag_Parser.print_expr (Tag_Parser.tag_parse (Reader.nt_sexpr str 0).found);;
+let showTag str = (Tag_Parser.tag_parse (Reader.nt_sexpr str 0).found);;
 let showSem str = Semantic_Analysis.semantics (Tag_Parser.tag_parse (Reader.nt_sexpr str 0).found);;
 
 #use "compiler.ml";;
