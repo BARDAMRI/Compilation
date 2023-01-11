@@ -567,7 +567,7 @@ module Code_Generation : CODE_GENERATION= struct
         (string_of_int(minor))) ^
         "\tmov qword[rax], rdx\n"
       | ScmBox' _ ->
-       (X_syntax "error with ScmBox' in code_gen. This souldn not happen")
+       raise (X_syntax "error with ScmBox' in code_gen. This sould not happen")
       | ScmBoxGet' var' ->
          (run params env (ScmVarGet' var'))
          ^ "\tmov rax, qword [rax]\n"
