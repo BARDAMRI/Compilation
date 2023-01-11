@@ -567,10 +567,7 @@ module Code_Generation : CODE_GENERATION= struct
         (string_of_int(minor))) ^
         "\tmov qword[rax], rdx\n"
       | ScmBox' _ ->
-          "\t; code generated for ScmBox'\n" ^
-          "\tcall malloc\n" ^
-          "\tmov qword [rax], 0\n" ^
-          "\tmov rax, rax\n"
+       (X_syntax "error with ScmBox' in code_gen. This souldn not happen")
       | ScmBoxGet' var' ->
          (run params env (ScmVarGet' var'))
          ^ "\tmov rax, qword [rax]\n"
@@ -661,7 +658,6 @@ module Code_Generation : CODE_GENERATION= struct
       "\tpop rbx\n" ^ 
       "\tshl rbx, 3\n" ^
       "\tadd rsp, rbx\n"
-      | ScmApplic' (proc, args, Tail_Call) -> 
       | ScmApplic' (proc, args, Tail_Call) ->
         let numOfArgs = List.length args in
         "\t; code generated for ScmApplic' (Tail_Call)\n" ^
