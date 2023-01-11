@@ -567,13 +567,10 @@ module Code_Generation : CODE_GENERATION= struct
         (string_of_int(minor))) ^
         "\tmov qword[rax], rdx\n"
       | ScmBox' _ ->
-        let label = make_lambda_simple_code() in
-        "\t; code generated for ScmBox\n" ^
-        "\tmov rdi, qword [rsp]\n"^
-        "\tpush rdi\n"^
-        "\tmov rdi, rsp\n"^
-        (Printf.sprintf "\tmov rsi, %s\n" label)^
-        "\tcall box\n"c
+          "\t; code generated for ScmBox'\n" ^
+          "\tcall malloc\n" ^
+          "\tmov qword [rax], 0\n" ^
+          "\tmov rax, rax\n"
       | ScmBoxGet' var' ->
          (run params env (ScmVarGet' var'))
          ^ "\tmov rax, qword [rax]\n"
