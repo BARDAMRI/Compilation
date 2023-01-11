@@ -129,13 +129,7 @@ module Code_Generation : CODE_GENERATION= struct
           else (search sym rest)
 
       in fun sym table ->
-        match sym with
-        | ScmVoid -> 0
-        | ScmNil -> 1
-        | ScmBoolean false -> 2
-        | ScmBoolean true -> 3
-        | ScmChar '\000' -> 4
-        | _ -> (search sym table);;
+          search sym table;;
 
   let const_repr sexpr loc table = match sexpr with
     | ScmVoid -> ([RTTI "T_void"], 1)
