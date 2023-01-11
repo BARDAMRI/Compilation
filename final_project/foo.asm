@@ -85,8 +85,16 @@ L_constants:
 	db 0x61
 	db T_symbol	; a
 	dq L_constants + 6
-	db T_pair	; (a)
-	dq L_constants + 16, L_constants + 1
+	db T_string	; "b"
+	dq 1
+	db 0x62
+	db T_symbol	; b
+	dq L_constants + 25
+	db T_string	; "c"
+	dq 1
+	db 0x63
+	db T_symbol	; c
+	dq L_constants + 44
 
 section .bss
 free_var_0:	; location of null?
@@ -200,6 +208,8 @@ free_var_53:	; location of numerator
 free_var_54:	; location of denominator
 	resq 1
 free_var_55:	; location of eq?
+	resq 1
+free_var_56:	; location of x
 	resq 1
 
 extern printf, fprintf, stdout, stderr, fwrite, exit, putchar
@@ -488,8 +498,58 @@ main:
 	mov rsi, L_code_ptr_eq
 	call bind_primitive
 
+	; code generated for ScmApplicNoneTailCall'
+	; code generated for ScmApplicNoneTailCall'
+	; code generated for ScmApplicNoneTailCall'
 	; code generated for ScmConst
-	mov rax, L_constants + 25
+	mov rax, L_constants + 1
+	push rax
+	; code generated for ScmConst
+	mov rax, L_constants + 54
+	push rax
+	push 2
+	; code generated for ScmVarGet' (Free))
+	mov rax, qword [free_var_13]
+	push qword[rax+1]
+	call qword[rax+1+8]
+	add rsp, 8
+	pop rbx
+	shl rbx, 3
+	add rsp, rbx
+	push rax
+	; code generated for ScmConst
+	mov rax, L_constants + 35
+	push rax
+	push 2
+	; code generated for ScmVarGet' (Free))
+	mov rax, qword [free_var_13]
+	push qword[rax+1]
+	call qword[rax+1+8]
+	add rsp, 8
+	pop rbx
+	shl rbx, 3
+	add rsp, rbx
+	push rax
+	; code generated for ScmConst
+	mov rax, L_constants + 16
+	push rax
+	push 2
+	; code generated for ScmVarGet' (Free))
+	mov rax, qword [free_var_13]
+	push qword[rax+1]
+	call qword[rax+1+8]
+	add rsp, 8
+	pop rbx
+	shl rbx, 3
+	add rsp, rbx
+	mov qword [free_var_56], rax
+	mov rax, sob_void
+
+	mov rdi, rax
+	call print_sexpr_if_not_void
+
+	; code generated for ScmVarGet' (Free))
+	mov rax, qword [free_var_56]
 
 	mov rdi, rax
 	call print_sexpr_if_not_void

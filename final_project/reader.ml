@@ -456,7 +456,7 @@ module Reader : READER = struct
       disj_list [nt_void; nt_number; nt_boolean; nt_char; nt_symbol;
                  nt_string; nt_vector; nt_list; nt_quoted_forms] in
     let nt1 = make_skipped_star nt1 in
-    nt1 str;;
+      nt1 str;;
 
   let scheme_sexpr_list_of_sexpr_list sexprs =
     List.fold_right (fun car cdr -> ScmPair (car, cdr)) sexprs ScmNil;;

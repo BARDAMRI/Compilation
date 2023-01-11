@@ -483,7 +483,7 @@ module Code_Generation : CODE_GENERATION= struct
         "\t; code generated for ScmIf'\n" ^
         asm_test ^
         "\tcmp rax, sob_boolean_false\n" ^
-        ( Printf.sprintf "\tjne %s\n" label_dif ) ^
+        ( Printf.sprintf "\tje %s\n" label_dif ) ^
         asm_dit ^
         ( Printf.sprintf "\tjmp %s\n" label_end_if ) ^
         ( Printf.sprintf "\t%s\n" label_dif ) ^
@@ -519,7 +519,7 @@ module Code_Generation : CODE_GENERATION= struct
         asm_expr ^
         "\t; code generated for ScmVarSet' (Free)\n" ^
         (Printf.sprintf
-          "\tmov rax, qword [%s]\n"
+          "\tmov qword [%s], rax\n"
           label) ^
         "\tmov rax, sob_void\n"
       | ScmVarSet' (Var' (v, Param minor), expr') -> (* change *)
@@ -639,12 +639,13 @@ module Code_Generation : CODE_GENERATION= struct
       "\t; code generated for ScmApplicNoneTailCall'\n" ^
       (List.fold_right
         (fun x acc -> acc ^ 
-                      (run numOfArgs (env + 1) x) ^
-                      "\tpush rax\n") 
+                      (run numOfArgs (env+1) x) ^
+                      "\tpush rax\n"
+                      ) 
                       args
                       "") ^
       (Printf.sprintf "\tpush %d\n" numOfArgs) ^
-      (run numOfArgs (env + 1) proc) ^
+      (run numOfArgs (env+1) proc) ^
       "\tpush qword[rax+1]\n" ^
       (Printf.sprintf "\tcall qword[rax+1+%d]\n" word_size) ^
       "\tadd rsp, 8\n" ^
